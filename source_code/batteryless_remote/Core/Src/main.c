@@ -21,6 +21,7 @@
 #include "main.h"
 #include "usart.h"
 #include "gpio.h"
+#include "log.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -90,9 +91,9 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-
+  Log_Init();
+  Log_Printf("batteryless remote start\n");
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -102,7 +103,6 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-  LL_USART_TransmitData8(USART2, 0x32);
 	LL_mDelay(500);
 	LL_GPIO_WriteOutputPort(GPIOB, LL_GPIO_PIN_1);
 	LL_mDelay(500);
