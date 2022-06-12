@@ -2,7 +2,7 @@
  * @Author: bbear2 bbear_mail@163.com
  * @Date: 2022-06-10 00:27:52
  * @LastEditors: bbear2 bbear_mail@163.com
- * @LastEditTime: 2022-06-12 19:24:37
+ * @LastEditTime: 2022-06-12 19:28:53
  * @FilePath: \batteryless_remote\Core\Src\log.c
  * @Description: 日志系统实现
  */
