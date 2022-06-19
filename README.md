@@ -22,4 +22,4 @@
 * 脉冲宽度调制(PWM)
 * 脉冲位置调制(PPM)
 
-软件实现上只需要兼容这两种方法就可以实现对大多数红外信号的编解码控制。
+由于实际测试不通遥控器的波形中发现不通厂商的红外信号定义和PPM以及PWM差别较大，因此采用一种通用的数据存储格式保存数据。具体格式细节见[这里](https://github.com/sidianneng/batteryless_remote/blob/main/doc/%E7%BA%A2%E5%A4%96%E8%A7%A3%E7%A0%81%E6%95%B0%E6%8D%AE%E4%BF%9D%E5%AD%98%E6%A0%BC%E5%BC%8F%E5%AE%9A%E4%B9%89.md)。
