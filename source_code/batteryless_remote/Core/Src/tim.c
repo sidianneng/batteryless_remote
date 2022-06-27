@@ -74,6 +74,7 @@ void MX_TIM2_Init(void)
   /* USER CODE BEGIN TIM2_Init 2 */
   LL_TIM_CC_EnableChannel(TIM2, LL_TIM_CHANNEL_CH1);
   LL_TIM_EnableIT_CC1(TIM2);
+  LL_TIM_EnableCounter(TIM2);
   /* USER CODE END TIM2_Init 2 */
 
 }

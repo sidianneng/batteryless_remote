@@ -57,7 +57,8 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+extern uint16_t data_buf[];
+extern uint8_t data_cnt;
 /* USER CODE END 0 */
 
 /**
@@ -92,11 +93,11 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
   Log_Init();
   Log_Printf("batteryless remote start\n");
   LL_GPIO_WriteOutputPort(GPIOB, LL_GPIO_PIN_1);
+  MX_TIM2_Init();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -108,6 +109,15 @@ int main(void)
     /* USER CODE BEGIN 3 */
 	LL_mDelay(500);
   Log_Printf("led test\n");
+  if(data_cnt >= 20)
+  {
+    for(uint8_t i = 1;i < 20; ++i)
+    {
+      Log_Printf("%d ", data_buf[i]);
+    }
+    Log_Printf("\n");
+    data_cnt = 0;
+  }
   }
   /* USER CODE END 3 */
 }
