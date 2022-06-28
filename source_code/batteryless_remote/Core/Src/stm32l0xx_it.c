@@ -145,7 +145,7 @@ void SysTick_Handler(void)
   * @brief This function handles TIM2 global interrupt.
   */
 static uint32_t Trig_Edge = LL_TIM_IC_POLARITY_FALLING;
-uint16_t data_buf[20] = { 0 };
+uint16_t data_buf[75] = { 0 };
 uint8_t data_cnt = 0;
 void TIM2_IRQHandler(void)
 {
@@ -157,7 +157,7 @@ void TIM2_IRQHandler(void)
     {
       Trig_Edge = LL_TIM_IC_POLARITY_RISING;
       LL_TIM_IC_SetPolarity(TIM2, LL_TIM_CHANNEL_CH1, LL_TIM_IC_POLARITY_RISING);
-      if(data_cnt < 20)
+      if(data_cnt < 75)
       {
         data_buf[data_cnt] = LL_TIM_IC_GetCaptureCH1(TIM2);
         data_cnt++;
@@ -168,7 +168,7 @@ void TIM2_IRQHandler(void)
     {
       Trig_Edge = LL_TIM_IC_POLARITY_FALLING;
       LL_TIM_IC_SetPolarity(TIM2, LL_TIM_CHANNEL_CH1, LL_TIM_IC_POLARITY_FALLING);
-      if(data_cnt < 20)
+      if(data_cnt < 75)
       {
         data_buf[data_cnt] = LL_TIM_IC_GetCaptureCH1(TIM2);
         data_cnt++;

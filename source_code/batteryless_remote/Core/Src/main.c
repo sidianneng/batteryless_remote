@@ -59,6 +59,8 @@ void SystemClock_Config(void);
 /* USER CODE BEGIN 0 */
 extern uint16_t data_buf[];
 extern uint8_t data_cnt;
+uint16_t low_level_max_time = 0;
+uint16_t high_level_max_time = 0;
 /* USER CODE END 0 */
 
 /**
@@ -109,13 +111,29 @@ int main(void)
     /* USER CODE BEGIN 3 */
 	LL_mDelay(500);
   Log_Printf("led test\n");
-  if(data_cnt >= 20)
+  if(data_cnt >= 75)
   {
-    for(uint8_t i = 1;i < 20; ++i)
+    for(uint8_t i = 1;i < 75; ++i)
     {
-      Log_Printf("%d ", data_buf[i]);
+      Log_Printf("%4d ", data_buf[i]);
+      if(i%2 != 0)
+      {
+        low_level_max_time = (low_level_max_time >= data_buf[i] ? low_level_max_time : data_buf[i]);
+      }
+      else
+      {
+        high_level_max_time = (high_level_max_time >= data_buf[i] ? high_level_max_time : data_buf[i]);
+        if(high_level_max_time > low_level_max_time*2)
+        {
+          Log_Printf("i:%d\n", i);
+          break;
+        }
+      }
     }
     Log_Printf("\n");
+    memset(data_buf, 0x0000, 75);
+    low_level_max_time = 0;
+    high_level_max_time = 0;
     data_cnt = 0;
   }
   }
