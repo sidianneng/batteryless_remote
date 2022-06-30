@@ -61,6 +61,11 @@ extern uint16_t data_buf[];
 extern uint8_t data_cnt;
 uint16_t low_level_max_time = 0;
 uint16_t high_level_max_time = 0;
+
+static uint32_t debug_addr = 0x08080000;
+
+#define FLASH_PEKEY1 0x89ABCDEF
+#define FLASH_PEKEY2 0x02030405
 /* USER CODE END 0 */
 
 /**
@@ -100,6 +105,9 @@ int main(void)
   Log_Printf("batteryless remote start\n");
   LL_GPIO_WriteOutputPort(GPIOB, LL_GPIO_PIN_1);
   MX_TIM2_Init();
+
+  //*((uint32_t *)debug_addr) = 0x11;
+  Log_Printf("data store:0x%08x\n", *((uint32_t *)debug_addr));
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -125,6 +133,18 @@ int main(void)
         high_level_max_time = (high_level_max_time >= data_buf[i] ? high_level_max_time : data_buf[i]);
         if(high_level_max_time > low_level_max_time*2)
         {
+          //unlock the eeprom
+          while ((FLASH->SR & FLASH_SR_BSY) != 0);
+          if ((FLASH->PECR & FLASH_PECR_PELOCK) != 0)
+          {
+            FLASH->PEKEYR = FLASH_PEKEY1;
+            FLASH->PEKEYR = FLASH_PEKEY2;
+          }
+          //write data to eeprom
+          *((uint32_t *)debug_addr) = i;
+          //lock the eeprom again
+          while ((FLASH->SR & FLASH_SR_BSY) != 0);
+          FLASH->PECR |= FLASH_PECR_PELOCK;
           Log_Printf("i:%d\n", i);
           break;
         }
