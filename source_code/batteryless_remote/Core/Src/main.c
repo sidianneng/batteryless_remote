@@ -24,6 +24,7 @@
 #include "gpio.h"
 #include "log.h"
 #include "eeprom.h"
+#include "ir_decode.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -58,10 +59,6 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-extern uint16_t data_buf[];
-extern uint8_t data_cnt;
-uint16_t low_level_max_time = 0;
-uint16_t high_level_max_time = 0;
 
 static uint32_t test_read_data;
 /* USER CODE END 0 */
@@ -99,13 +96,14 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
+  ir_decode_init();
   Log_Init();
   Log_Printf("batteryless remote start\n");
   LL_GPIO_WriteOutputPort(GPIOB, LL_GPIO_PIN_1);
   MX_TIM2_Init();
 
-  ret = eeprom_read(EEPROM_START_ADDR, &test_read_data, 1);
-  Log_Printf("ret:%d data:%d\n", ret, test_read_data);
+  //ret = eeprom_read(EEPROM_START_ADDR, &test_read_data, 1);
+  //Log_Printf("ret:%d data:%d\n", ret, test_read_data);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -117,31 +115,16 @@ int main(void)
     /* USER CODE BEGIN 3 */
 	LL_mDelay(500);
   //Log_Printf("led test\n");
-  if(data_cnt >= 75)
+  if(ir_origin_data_ready != 0)
   {
-    for(uint32_t i = 1;i < 75; ++i)
+    for(uint8_t i = 1;i < origin_ir_data_cnt; ++i)
     {
-      Log_Printf("%4d ", data_buf[i]);
-      if(i%2 != 0)
-      {
-        low_level_max_time = (low_level_max_time >= data_buf[i] ? low_level_max_time : data_buf[i]);
-      }
-      else
-      {
-        high_level_max_time = (high_level_max_time >= data_buf[i] ? high_level_max_time : data_buf[i]);
-        if(high_level_max_time > low_level_max_time*2)
-        {
-          ret = eeprom_write(EEPROM_START_ADDR, &i, 1, 0);
-          Log_Printf("ret:%d i:%d\n", ret, i);
-          break;
-        }
-      }
+      Log_Printf("%d ", origin_ir_data[i]);
     }
     Log_Printf("\n");
-    memset(data_buf, 0x0000, 75);
-    low_level_max_time = 0;
-    high_level_max_time = 0;
-    data_cnt = 0;
+    Log_Printf("ir OK,len:%d\n", origin_ir_data_cnt);
+    Log_Printf("maxlow:%d maxhigh:%d\n", low_level_max_time, high_level_max_time);
+    ir_decode_init();
   }
   }
   /* USER CODE END 3 */

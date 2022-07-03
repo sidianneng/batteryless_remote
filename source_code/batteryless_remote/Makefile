@@ -50,7 +50,8 @@ Core/Src/usart.c \
 Core/Src/log.c \
 Core/Src/tim.c \
 Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_ll_tim.c \
-Core/Src/eeprom.c
+Core/Src/eeprom.c \
+Core/Src/ir_decode.c
 
 # ASM sources
 ASM_SOURCES =  \

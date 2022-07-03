@@ -21,6 +21,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stm32l0xx_it.h"
+#include "ir_decode.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 /* USER CODE END Includes */
@@ -145,8 +146,6 @@ void SysTick_Handler(void)
   * @brief This function handles TIM2 global interrupt.
   */
 static uint32_t Trig_Edge = LL_TIM_IC_POLARITY_FALLING;
-uint16_t data_buf[75] = { 0 };
-uint8_t data_cnt = 0;
 void TIM2_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM2_IRQn 0 */
@@ -157,10 +156,15 @@ void TIM2_IRQHandler(void)
     {
       Trig_Edge = LL_TIM_IC_POLARITY_RISING;
       LL_TIM_IC_SetPolarity(TIM2, LL_TIM_CHANNEL_CH1, LL_TIM_IC_POLARITY_RISING);
-      if(data_cnt < 75)
+      if(origin_ir_data_cnt < IR_DATA_MAX_LEN)
       {
-        data_buf[data_cnt] = LL_TIM_IC_GetCaptureCH1(TIM2);
-        data_cnt++;
+        origin_ir_data[origin_ir_data_cnt] = LL_TIM_IC_GetCaptureCH1(TIM2);
+        if(origin_ir_data_cnt > 0)
+          high_level_max_time = (high_level_max_time >= origin_ir_data[origin_ir_data_cnt] ? \
+            high_level_max_time : origin_ir_data[origin_ir_data_cnt]);
+        if(high_level_max_time > low_level_max_time * 2)
+          ir_origin_data_ready = 1;
+        origin_ir_data_cnt++;
       }
       LL_TIM_SetCounter(TIM2, 0);
     }
@@ -168,10 +172,12 @@ void TIM2_IRQHandler(void)
     {
       Trig_Edge = LL_TIM_IC_POLARITY_FALLING;
       LL_TIM_IC_SetPolarity(TIM2, LL_TIM_CHANNEL_CH1, LL_TIM_IC_POLARITY_FALLING);
-      if(data_cnt < 75)
+      if(origin_ir_data_cnt < IR_DATA_MAX_LEN)
       {
-        data_buf[data_cnt] = LL_TIM_IC_GetCaptureCH1(TIM2);
-        data_cnt++;
+        origin_ir_data[origin_ir_data_cnt] = LL_TIM_IC_GetCaptureCH1(TIM2);
+        low_level_max_time = (low_level_max_time >= origin_ir_data[origin_ir_data_cnt] ? \
+          low_level_max_time : origin_ir_data[origin_ir_data_cnt]);
+        origin_ir_data_cnt++;
       }
       LL_TIM_SetCounter(TIM2, 0);
     }
