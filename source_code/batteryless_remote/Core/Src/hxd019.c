@@ -19,10 +19,10 @@ hxd019c和hxd019d的有区别
 void 
 i2c_init(void)
 {
-	PIN_FUNC_SELECT(SCL_PIN_MUX, SCL_PIN_FUNC);
+	//PIN_FUNC_SELECT(SCL_PIN_MUX, SCL_PIN_FUNC);
 	//PIN_FUNC_SELECT(SDA_PIN_MUX, SDA_PIN_FUNC);
-	gpio16_output_conf();
-	gpio_output_set(0, 0, 1 << SCL_PIN, 0);
+	//gpio16_output_conf();
+	//gpio_output_set(0, 0, 1 << SCL_PIN, 0);
 
 	SDA_H;
 	SCL_H;
@@ -164,12 +164,12 @@ i2c_readbyte(uint8_t ack)
 /******************************************************************************
  * hxd019
  */
-static uint8_t hxd_learn_data[230];		// 存储原始的学习数据
+static uint8_t hxd_learn_data[110];		// 存储原始的学习数据
 
 // 学习成功，可以直接发送这个编码
-static hxd019_learn_callback_t learn_callback;// 学习成功或者超时将会触发回调函数
+//static hxd019_learn_callback_t learn_callback;// 学习成功或者超时将会触发回调函数
 static uint16_t learn_timeout_cnt;
-static os_timer_t hxd_learn_tm;
+//static os_timer_t hxd_learn_tm;
 static uint8_t learn_method = 1;			// 默认是学习方法1, 学习方法2匹配结果更准确一些
 
 /*
@@ -192,8 +192,8 @@ hxd019_init(void)
 {
 	i2c_init();
 
-	PIN_FUNC_SELECT(BUSY_PIN_MUX, BUSY_PIN_FUNC);
-	gpio_output_set(0, 0, 0, 1 << BUSY_PIN);
+	//PIN_FUNC_SELECT(BUSY_PIN_MUX, BUSY_PIN_FUNC);
+	//gpio_output_set(0, 0, 0, 1 << BUSY_PIN);
 }
 
 /*
@@ -301,7 +301,7 @@ hxd019_read(uint8_t *buf)
 
 	return 0;
 }
-
+#if 0
 LOCAL void 
 hxd019_learn_tm_func(void *timer_arg)
 {
@@ -342,7 +342,7 @@ hxd019_learn_tm_func(void *timer_arg)
 		}
 	}
 }
-
+#endif
 /*
  * 配置hxd019进入学习状态,并等待学习数据,学习成功后的学习数据存储在hxd019_learn_data[]中
  *
@@ -355,10 +355,11 @@ hxd019_learn_tm_func(void *timer_arg)
  *         2)要靠近红外收发头5cm内才能学习到数据
  */
 void 
-hxd019_learn(uint8_t method, hxd019_learn_callback_t func)
+hxd019_learn(uint8_t method/*, hxd019_learn_callback_t func*/)
 {
 	int n = 0;
 	uint8_t b1, b2, b3;
+	uint32_t time_cnt = 0;
 
 	if (method != 1 && method != 2)
 	{
@@ -390,12 +391,38 @@ hxd019_learn(uint8_t method, hxd019_learn_callback_t func)
 
 	os_delay_us(10000);
 
+	while(1)
+	{
+		if (HXD019_BUSY_is_H)
+		{
+			HXD019_PRINTF("hxd019 learn OK\n");
+			if (hxd019_read(hxd_learn_data))
+			{
+				HXD019_PRINTF("hxd019_read() failed\n");
+			}
+			else
+			{
+				for(uint8_t i = 0;i < 110; ++i)
+				    HXD019_PRINTF("0x%02x ", hxd_learn_data[i]);
+				HXD019_PRINTF("\n");
+			}
+		}
+		os_delay_us(10000);
+		time_cnt++;
+		if(time_cnt >= 2000)
+		{
+			HXD019_PRINTF("hxd019 learn failed\n");
+			break;
+		}
+	}
+#if 0
 	// 每隔10ms查询一次busy脚
 	learn_callback = func;	// 设置回调函数
 	learn_timeout_cnt = 0;	// 超时计数清0
 	os_timer_disarm(&hxd_learn_tm);
 	os_timer_setfn(&hxd_learn_tm, (os_timer_func_t *)hxd019_learn_tm_func, 0);
 	os_timer_arm(&hxd_learn_tm, 10, 1);
+#endif
 }
 
 

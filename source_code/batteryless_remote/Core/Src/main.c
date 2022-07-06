@@ -23,8 +23,9 @@
 #include "usart.h"
 #include "gpio.h"
 #include "log.h"
-#include "eeprom.h"
-#include "ir_decode.h"
+//#include "eeprom.h"
+//#include "ir_decode.h"
+#include "hxd019.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -96,14 +97,13 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
-  ir_decode_init();
   Log_Init();
   Log_Printf("batteryless remote start\n");
   LL_GPIO_WriteOutputPort(GPIOB, LL_GPIO_PIN_1);
-  MX_TIM2_Init();
 
-  //ret = eeprom_read(EEPROM_START_ADDR, &test_read_data, 1);
-  //Log_Printf("ret:%d data:%d\n", ret, test_read_data);
+  hxd019_init();
+  hxd019_learn(1);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -113,19 +113,9 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	LL_mDelay(500);
-  //Log_Printf("led test\n");
-  if(ir_origin_data_ready != 0)
-  {
-    for(uint8_t i = 1;i < origin_ir_data_cnt; ++i)
-    {
-      Log_Printf("%d ", origin_ir_data[i]);
-    }
-    Log_Printf("\n");
-    Log_Printf("ir OK,len:%d\n", origin_ir_data_cnt);
-    Log_Printf("maxlow:%d maxhigh:%d\n", low_level_max_time, high_level_max_time);
-    ir_decode_init();
-  }
+	LL_mDelay(500000);
+  Log_Printf("led test\n");
+  LL_GPIO_TogglePin(GPIOB, LL_GPIO_PIN_1);
   }
   /* USER CODE END 3 */
 }

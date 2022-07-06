@@ -1,32 +1,36 @@
 #ifndef _HXD019_H_
 #define _HXD019_H_
 
-#include "esp_common.h"
-
-#include "gpio.h"
-#include "gpio16.h"
-
-
+#include "log.h"
+#include "main.h"
 
 /******************************************************************************
 *  i2c引脚定义
 */
-#define SCL_PIN_MUX		PERIPHS_IO_MUX_MTMS_U
-#define SCL_PIN_FUNC	FUNC_GPIO14
-#define SCL_PIN			14
-//#define SDA_PIN_MUX		PERIPHS_IO_MUX_GPIO5_U
-//#define SDA_PIN_FUNC	FUNC_GPIO5
-//#define SDA_PIN			5
+#define SCL_PIN_MUX		0
+#define SCL_PIN_FUNC	GPIOA
+#define SCL_PIN			LL_GPIO_PIN_4
+#define SDA_PIN_MUX		0
+#define SDA_PIN_FUNC	GPIOA
+#define SDA_PIN			LL_GPIO_PIN_13
 
-#define SDA_IN()  	gpio16_input_conf()
-#define SDA_OUT()	gpio16_output_conf()
+#define SDA_IN()  	LL_GPIO_SetPinMode(SDA_PIN_FUNC, SDA_PIN, LL_GPIO_MODE_INPUT)
+#define SDA_OUT()	LL_GPIO_SetPinMode(SDA_PIN_FUNC, SDA_PIN, LL_GPIO_MODE_OUTPUT)
 
-#define SDA_H		gpio16_output_set(1)
-#define SDA_L		gpio16_output_set(0)
-#define SDA_is_H	gpio16_input_get()
+#define SDA_H		LL_GPIO_WriteOutputPort(SDA_PIN_FUNC, SDA_PIN)
+#define SDA_L		do \
+					{\
+						LL_GPIO_WriteOutputPort(SDA_PIN_FUNC, LL_GPIO_ReadOutputPort(SDA_PIN_FUNC) & (~SDA_PIN));\
+					}while(0)
+#define SDA_is_H	LL_GPIO_IsInputPinSet(SDA_PIN_FUNC, SDA_PIN)
 
-#define SCL_H		GPIO_OUTPUT_SET(SCL_PIN,1)
-#define SCL_L		GPIO_OUTPUT_SET(SCL_PIN,0)
+#define SCL_H		LL_GPIO_WriteOutputPort(SCL_PIN_FUNC, SCL_PIN)
+#define SCL_L		do \
+					{\
+						LL_GPIO_WriteOutputPort(SCL_PIN_FUNC, LL_GPIO_ReadOutputPort(SCL_PIN_FUNC) & (~SCL_PIN));\
+					}while(0)
+
+#define os_delay_us LL_mDelay
 
 #define NOP5us		os_delay_us(30)	// 25us~35us之间可行
 
@@ -34,22 +38,22 @@
 /******************************************************************************
 * hxd019
 */
-#define HXD019_TEST
+//#define HXD019_TEST
 #define HXD019_DEBUG
 
 #ifdef HXD019_DEBUG
-#define HXD019_PRINTF(fmt,...)  os_printf(fmt, ##__VA_ARGS__)
+#define HXD019_PRINTF(fmt,...)  Log_Printf(fmt, ##__VA_ARGS__)
 #else
 #define HXD019_PRINTF(fmt,...)
 #endif
 
-#define BUSY_PIN_MUX	PERIPHS_IO_MUX_GPIO5_U
-#define BUSY_PIN_FUNC	FUNC_GPIO5
-#define BUSY_PIN		5
+#define BUSY_PIN_MUX	0
+#define BUSY_PIN_FUNC	GPIOA
+#define BUSY_PIN		LL_GPIO_PIN_9
 
-#define HXD019_BUSY_is_H	GPIO_INPUT_GET(BUSY_PIN)
+#define HXD019_BUSY_is_H	LL_GPIO_IsInputPinSet(BUSY_PIN_FUNC, BUSY_PIN)
 
-typedef void (*hxd019_learn_callback_t)(uint8_t *data, int length, uint8 status);
+//typedef void (*hxd019_learn_callback_t)(uint8_t *data, int length, uint8_t status);
 
 enum
 {
@@ -61,7 +65,7 @@ enum
 void hxd019_init(void);
 void hxd019_write(uint8_t *buf, int n);
 uint8_t hxd019_read(uint8_t *buf);
-void hxd019_learn(uint8_t method, hxd019_learn_callback_t func);
+void hxd019_learn(uint8_t method/*, hxd019_learn_callback_t func*/);
 
 #ifdef HXD019_TEST
 // 测试函数
