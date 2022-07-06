@@ -147,7 +147,7 @@ static ErrorStatus UTILS_PLL_IsBusy(void);
 void LL_Init1msTick(uint32_t HCLKFrequency)
 {
   /* Use frequency provided in argument */
-  LL_InitTick(HCLKFrequency, 1000U);
+  LL_InitTick(HCLKFrequency, 1000000U);
 }
 
 /**
