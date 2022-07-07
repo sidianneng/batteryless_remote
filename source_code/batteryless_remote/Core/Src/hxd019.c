@@ -405,6 +405,7 @@ hxd019_learn(uint8_t method/*, hxd019_learn_callback_t func*/)
 				for(uint8_t i = 0;i < 110; ++i)
 				    HXD019_PRINTF("0x%02x ", hxd_learn_data[i]);
 				HXD019_PRINTF("\n");
+				break;
 			}
 		}
 		os_delay_us(10000);
