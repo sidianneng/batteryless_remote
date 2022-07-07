@@ -203,7 +203,7 @@ hxd019_init(void)
  *        F_code,KEY_code,COM_CODE在码库文件中查询.
  * @n     buf的长度
  *
- * note   学习1处理后的数据: 0x30 0x00 + 112字节数据
+ * note   学习1处理后的数据: 0x30 0x00 + 110字节数据
  *        学习2处理后的数据: 0x30 0x03 + 230字节数据
  */
 void 
@@ -360,6 +360,7 @@ hxd019_learn(uint8_t method/*, hxd019_learn_callback_t func*/)
 	int n = 0;
 	uint8_t b1, b2, b3;
 	uint32_t time_cnt = 0;
+	uint8_t temp_buf[10] = { 0 };
 
 	if (method != 1 && method != 2)
 	{
@@ -416,6 +417,18 @@ hxd019_learn(uint8_t method/*, hxd019_learn_callback_t func*/)
 			break;
 		}
 	}
+
+	HXD019_PRINTF("delay 5s before send data\n");
+	os_delay_us(5000000);
+	HXD019_PRINTF("send IR data~\n");
+	temp_buf[0] = 0x30;
+	temp_buf[1] = 0x00;
+	for(uint8_t i = 0;i < 7; ++i)
+		temp_buf[2 + i] = hxd_learn_data[i];
+	for(uint8_t i = 0;i < 9; ++i)
+		temp_buf[9] += temp_buf[i];
+	hxd019_learn_write_test(temp_buf, sizeof(temp_buf));
+	HXD019_PRINTF("send IR finish~\n");
 #if 0
 	// 每隔10ms查询一次busy脚
 	learn_callback = func;	// 设置回调函数
@@ -644,7 +657,7 @@ hxd019_arc_write_test(int n)
 }
 
 void 
-learn_test_func(uint8_t *data, int length, uint8 status)
+learn_test_func(uint8_t *data, int length, uint8_t status)
 {
 	if (status == HXD019_OK)
 	{
@@ -660,7 +673,7 @@ learn_test_func(uint8_t *data, int length, uint8 status)
 void 
 hxd019_learn_test(uint8_t method)
 {
-	hxd019_learn(method, learn_test_func);
+	hxd019_learn(method/*, learn_test_func*/);
 }
 
 void 

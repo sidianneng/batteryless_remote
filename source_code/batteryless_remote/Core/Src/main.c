@@ -114,7 +114,7 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 	LL_mDelay(500000);
-  Log_Printf("led test\n");
+  //Log_Printf("led test\n");
   LL_GPIO_TogglePin(GPIOB, LL_GPIO_PIN_1);
   }
   /* USER CODE END 3 */

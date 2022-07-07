@@ -38,7 +38,7 @@
 /******************************************************************************
 * hxd019
 */
-//#define HXD019_TEST
+#define HXD019_TEST
 #define HXD019_DEBUG
 
 #ifdef HXD019_DEBUG
