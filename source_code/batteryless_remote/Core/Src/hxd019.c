@@ -19,11 +19,6 @@ hxd019c和hxd019d的有区别
 void 
 i2c_init(void)
 {
-	//PIN_FUNC_SELECT(SCL_PIN_MUX, SCL_PIN_FUNC);
-	//PIN_FUNC_SELECT(SDA_PIN_MUX, SDA_PIN_FUNC);
-	//gpio16_output_conf();
-	//gpio_output_set(0, 0, 1 << SCL_PIN, 0);
-
 	SDA_H;
 	SCL_H;
 }
@@ -167,9 +162,7 @@ i2c_readbyte(uint8_t ack)
 static uint8_t hxd_learn_data[232];		// 存储原始的学习数据
 
 // 学习成功，可以直接发送这个编码
-//static hxd019_learn_callback_t learn_callback;// 学习成功或者超时将会触发回调函数
 static uint16_t learn_timeout_cnt;
-//static os_timer_t hxd_learn_tm;
 static uint8_t learn_method = 1;			// 默认是学习方法1, 学习方法2匹配结果更准确一些
 
 /*
@@ -301,48 +294,7 @@ hxd019_read(uint8_t *buf)
 
 	return 0;
 }
-#if 0
-LOCAL void 
-hxd019_learn_tm_func(void *timer_arg)
-{
-	learn_timeout_cnt++;
-	if (learn_timeout_cnt > 2000)	// 先判断20s超时
-	{
-		os_timer_disarm(&hxd_learn_tm);
-		if (learn_callback)
-		{
-			learn_callback(0, 0, HXD019_TIMEOUT);
-			learn_callback = 0;
-		}
-		return ;
-	}
 
-	if (HXD019_BUSY_is_H)			// busy脚变高，学习完毕
-	{
-		uint8_t status;
-
-		// 读出学习到的红外编码数据
-		if (hxd019_read(hxd_learn_data))
-		{
-			HXD019_PRINTF("hxd019_read() failed\n");
-			status = HXD019_FAILED;	// 读取失败
-		}
-		else
-		{
-			status = HXD019_OK;		// 读取ok
-		}
-
-		os_timer_disarm(&hxd_learn_tm);
-		if (learn_callback)
-		{
-			learn_callback(hxd_learn_data,
-				(learn_method==1)? 110 : 230,
-				status);
-			learn_callback = 0;
-		}
-	}
-}
-#endif
 /*
  * 配置hxd019进入学习状态,并等待学习数据,学习成功后的学习数据存储在hxd019_learn_data[]中
  *
@@ -355,7 +307,7 @@ hxd019_learn_tm_func(void *timer_arg)
  *         2)要靠近红外收发头5cm内才能学习到数据
  */
 void 
-hxd019_learn(uint8_t method/*, hxd019_learn_callback_t func*/)
+hxd019_learn(uint8_t method)
 {
 	int n = 0;
 	uint8_t b1, b2, b3;
@@ -425,7 +377,7 @@ hxd019_learn(uint8_t method/*, hxd019_learn_callback_t func*/)
 	hxd_learn_data[1] = 0x03;
 	checksum += hxd_learn_data[0];
 	checksum += hxd_learn_data[1];
-	for(uint8_t i = 3;i < 232 - 1; ++i)
+	for(uint8_t i = 3;i < 232; ++i)
 	{
 		hxd_learn_data[i - 1] = hxd_learn_data[i];
 	 	checksum += hxd_learn_data[i - 1];
@@ -436,14 +388,7 @@ hxd019_learn(uint8_t method/*, hxd019_learn_callback_t func*/)
 	HXD019_PRINTF("\n");
 	hxd019_write(hxd_learn_data, sizeof(hxd_learn_data));
 	HXD019_PRINTF("send IR finish~\n");
-#if 0
-	// 每隔10ms查询一次busy脚
-	learn_callback = func;	// 设置回调函数
-	learn_timeout_cnt = 0;	// 超时计数清0
-	os_timer_disarm(&hxd_learn_tm);
-	os_timer_setfn(&hxd_learn_tm, (os_timer_func_t *)hxd019_learn_tm_func, 0);
-	os_timer_arm(&hxd_learn_tm, 10, 1);
-#endif
+
 }
 
 

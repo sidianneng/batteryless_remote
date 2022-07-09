@@ -53,8 +53,6 @@
 
 #define HXD019_BUSY_is_H	LL_GPIO_IsInputPinSet(BUSY_PIN_FUNC, BUSY_PIN)
 
-//typedef void (*hxd019_learn_callback_t)(uint8_t *data, int length, uint8_t status);
-
 enum
 {
 	HXD019_OK = 0,
@@ -65,7 +63,7 @@ enum
 void hxd019_init(void);
 void hxd019_write(uint8_t *buf, int n);
 uint8_t hxd019_read(uint8_t *buf);
-void hxd019_learn(uint8_t method/*, hxd019_learn_callback_t func*/);
+void hxd019_learn(uint8_t method);
 
 #ifdef HXD019_TEST
 // ²âÊÔº¯Êý
