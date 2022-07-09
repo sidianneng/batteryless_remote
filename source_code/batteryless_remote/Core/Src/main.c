@@ -102,7 +102,7 @@ int main(void)
   LL_GPIO_WriteOutputPort(GPIOB, LL_GPIO_PIN_1);
 
   hxd019_init();
-  hxd019_learn(1);
+  hxd019_learn(2);
 
   /* USER CODE END 2 */
 

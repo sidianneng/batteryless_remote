@@ -164,7 +164,7 @@ i2c_readbyte(uint8_t ack)
 /******************************************************************************
  * hxd019
  */
-static uint8_t hxd_learn_data[110];		// 存储原始的学习数据
+static uint8_t hxd_learn_data[232];		// 存储原始的学习数据
 
 // 学习成功，可以直接发送这个编码
 //static hxd019_learn_callback_t learn_callback;// 学习成功或者超时将会触发回调函数
@@ -360,7 +360,7 @@ hxd019_learn(uint8_t method/*, hxd019_learn_callback_t func*/)
 	int n = 0;
 	uint8_t b1, b2, b3;
 	uint32_t time_cnt = 0;
-	uint8_t temp_buf[10] = { 0 };
+	uint8_t checksum = 0;
 
 	if (method != 1 && method != 2)
 	{
@@ -397,13 +397,13 @@ hxd019_learn(uint8_t method/*, hxd019_learn_callback_t func*/)
 		if (HXD019_BUSY_is_H)
 		{
 			HXD019_PRINTF("hxd019 learn OK\n");
-			if (hxd019_read(hxd_learn_data))
+			if (hxd019_read(hxd_learn_data+2))
 			{
 				HXD019_PRINTF("hxd019_read() failed\n");
 			}
 			else
 			{
-				for(uint8_t i = 0;i < 110; ++i)
+				for(uint8_t i = 2;i < 232; ++i)
 				    HXD019_PRINTF("0x%02x ", hxd_learn_data[i]);
 				HXD019_PRINTF("\n");
 				break;
@@ -421,13 +421,20 @@ hxd019_learn(uint8_t method/*, hxd019_learn_callback_t func*/)
 	HXD019_PRINTF("delay 5s before send data\n");
 	os_delay_us(5000000);
 	HXD019_PRINTF("send IR data~\n");
-	temp_buf[0] = 0x30;
-	temp_buf[1] = 0x00;
-	for(uint8_t i = 0;i < 7; ++i)
-		temp_buf[2 + i] = hxd_learn_data[i];
-	for(uint8_t i = 0;i < 9; ++i)
-		temp_buf[9] += temp_buf[i];
-	hxd019_learn_write_test(temp_buf, sizeof(temp_buf));
+	hxd_learn_data[0] = 0x30;
+	hxd_learn_data[1] = 0x03;
+	checksum += hxd_learn_data[0];
+	checksum += hxd_learn_data[1];
+	for(uint8_t i = 3;i < 232 - 1; ++i)
+	{
+		hxd_learn_data[i - 1] = hxd_learn_data[i];
+	 	checksum += hxd_learn_data[i - 1];
+	}
+	hxd_learn_data[232 - 1] = checksum;
+	for(uint8_t i = 0;i < 232; ++i)
+		HXD019_PRINTF("0x%02x ", hxd_learn_data[i]);
+	HXD019_PRINTF("\n");
+	hxd019_write(hxd_learn_data, sizeof(hxd_learn_data));
 	HXD019_PRINTF("send IR finish~\n");
 #if 0
 	// 每隔10ms查询一次busy脚
