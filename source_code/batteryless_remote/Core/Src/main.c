@@ -19,12 +19,9 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "tim.h"
 #include "usart.h"
 #include "gpio.h"
 #include "log.h"
-//#include "eeprom.h"
-//#include "ir_decode.h"
 #include "hxd019.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -61,7 +58,6 @@ void SystemClock_Config(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
-static uint32_t test_read_data;
 /* USER CODE END 0 */
 
 /**
@@ -71,7 +67,7 @@ static uint32_t test_read_data;
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-  int16_t ret = 0;
+
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -96,13 +92,12 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  /* USER CODE BEGIN 2 */
   Log_Init();
   Log_Printf("batteryless remote start\n");
-  LL_GPIO_WriteOutputPort(GPIOB, LL_GPIO_PIN_1);
 
   hxd019_init();
   hxd019_learn(2);
+  /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
 
@@ -113,9 +108,6 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	LL_mDelay(500000);
-  //Log_Printf("led test\n");
-  LL_GPIO_TogglePin(GPIOB, LL_GPIO_PIN_1);
   }
   /* USER CODE END 3 */
 }
@@ -126,42 +118,29 @@ int main(void)
   */
 void SystemClock_Config(void)
 {
-  LL_FLASH_SetLatency(LL_FLASH_LATENCY_1);
-  while(LL_FLASH_GetLatency()!= LL_FLASH_LATENCY_1)
-  {
-  }
-  LL_PWR_SetRegulVoltageScaling(LL_PWR_REGU_VOLTAGE_SCALE1);
+  /* HSI configuration and activation */
   LL_RCC_HSI_Enable();
-
-   /* Wait till HSI is ready */
   while(LL_RCC_HSI_IsReady() != 1)
   {
-
   }
-  LL_RCC_HSI_SetCalibTrimming(16);
-  LL_RCC_PLL_ConfigDomain_SYS(LL_RCC_PLLSOURCE_HSI, LL_RCC_PLL_MUL_3, LL_RCC_PLL_DIV_2);
-  LL_RCC_PLL_Enable();
 
-   /* Wait till PLL is ready */
-  while(LL_RCC_PLL_IsReady() != 1)
-  {
-
-  }
+  /* Set AHB prescaler*/
   LL_RCC_SetAHBPrescaler(LL_RCC_SYSCLK_DIV_1);
-  LL_RCC_SetAPB1Prescaler(LL_RCC_APB1_DIV_1);
-  LL_RCC_SetAPB2Prescaler(LL_RCC_APB2_DIV_1);
-  LL_RCC_SetSysClkSource(LL_RCC_SYS_CLKSOURCE_PLL);
 
-   /* Wait till System clock is ready */
-  while(LL_RCC_GetSysClkSource() != LL_RCC_SYS_CLKSOURCE_STATUS_PLL)
+  /* Sysclk activation on the HSI */
+  LL_RCC_SetSysClkSource(LL_RCC_SYS_CLKSOURCE_HSI);
+  while(LL_RCC_GetSysClkSource() != LL_RCC_SYS_CLKSOURCE_STATUS_HSI)
   {
-
   }
 
-  LL_Init1msTick(24000000);
+  /* Set APB1 prescaler*/
+  LL_RCC_SetAPB1Prescaler(LL_RCC_APB1_DIV_1);
 
-  LL_SetSystemCoreClock(24000000);
-  LL_RCC_SetUSARTClockSource(LL_RCC_USART2_CLKSOURCE_PCLK1);
+  LL_Init1msTick(16000000);
+
+  /* Update CMSIS variable (which can be updated also through SystemCoreClockUpdate function) */
+  LL_SetSystemCoreClock(16000000);
+  LL_RCC_SetUSARTClockSource(LL_RCC_USART1_CLKSOURCE_PCLK1);
 }
 
 /* USER CODE BEGIN 4 */

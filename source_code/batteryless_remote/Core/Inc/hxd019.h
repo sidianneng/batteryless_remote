@@ -8,11 +8,11 @@
 *  i2cÒý½Å¶¨Òå
 */
 #define SCL_PIN_MUX		0
-#define SCL_PIN_FUNC	GPIOC
-#define SCL_PIN			LL_GPIO_PIN_15
+#define SCL_PIN_FUNC	GPIOA
+#define SCL_PIN			LL_GPIO_PIN_0
 #define SDA_PIN_MUX		0
 #define SDA_PIN_FUNC	GPIOA
-#define SDA_PIN			LL_GPIO_PIN_13
+#define SDA_PIN			LL_GPIO_PIN_1
 
 #define SDA_IN()  	LL_GPIO_SetPinMode(SDA_PIN_FUNC, SDA_PIN, LL_GPIO_MODE_INPUT)
 #define SDA_OUT()	LL_GPIO_SetPinMode(SDA_PIN_FUNC, SDA_PIN, LL_GPIO_MODE_OUTPUT)
@@ -49,7 +49,7 @@
 
 #define BUSY_PIN_MUX	0
 #define BUSY_PIN_FUNC	GPIOA
-#define BUSY_PIN		LL_GPIO_PIN_9
+#define BUSY_PIN		LL_GPIO_PIN_2
 
 #define HXD019_BUSY_is_H	LL_GPIO_IsInputPinSet(BUSY_PIN_FUNC, BUSY_PIN)
 

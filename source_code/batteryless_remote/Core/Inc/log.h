@@ -2,9 +2,9 @@
  * @Author: bbear2 bbear_mail@163.com
  * @Date: 2022-06-10 00:28:15
  * @LastEditors: bbear2 bbear_mail@163.com
- * @LastEditTime: 2022-06-10 01:19:02
+ * @LastEditTime: 2022-07-12 00:25:45
  * @FilePath: \batteryless_remote\Core\Inc\log.h
- * @Description: 日志系统头文件
+ * @Description: 日志系统头文仄1�7
  */
 #ifndef __LOG_H__
 #define __LOG_H__

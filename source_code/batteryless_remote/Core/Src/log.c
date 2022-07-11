@@ -2,7 +2,7 @@
  * @Author: bbear2 bbear_mail@163.com
  * @Date: 2022-06-10 00:27:52
  * @LastEditors: bbear2 bbear_mail@163.com
- * @LastEditTime: 2022-06-12 19:28:53
+ * @LastEditTime: 2022-07-12 00:25:27
  * @FilePath: \batteryless_remote\Core\Src\log.c
  * @Description: 日志系统实现
  */
@@ -12,7 +12,7 @@
 void Log_Init(void)
 {
 #if DEBUG_LOG
-    MX_USART2_UART_Init();
+    MX_USART1_UART_Init();
 #endif
 }
 
