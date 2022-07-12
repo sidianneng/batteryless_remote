@@ -63,13 +63,12 @@ enum
 void hxd019_init(void);
 void hxd019_write(uint8_t *buf, int n);
 uint8_t hxd019_read(uint8_t *buf);
-void hxd019_learn(uint8_t method);
+void hxd019_learn(uint8_t method, uint8_t *output_data, uint8_t size);
 
 #ifdef HXD019_TEST
 // ²âÊÔº¯Êý
 void hxd019_noarc_write_test(int n);
 void hxd019_arc_write_test(int n);
-void hxd019_learn_test(uint8_t method);
 void hxd019_print_learn(void);
 void hxd019_learn_write_test(uint8_t *buf, int n);
 #endif

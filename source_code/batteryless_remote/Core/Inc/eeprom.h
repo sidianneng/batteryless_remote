@@ -2,7 +2,7 @@
  * @Author: bbear2 bbear_mail@163.com
  * @Date: 2022-07-02 14:44:05
  * @LastEditors: bbear2 bbear_mail@163.com
- * @LastEditTime: 2022-07-02 17:33:46
+ * @LastEditTime: 2022-07-13 01:01:27
  * @FilePath: \batteryless_remote\Core\Inc\eeprom.h
  * @Description: internal eeprom read/write
  */
@@ -15,7 +15,7 @@ extern "C" {
 
 #include "error_code.h"
 #include "stdint.h"
-#include "stm32l011xx.h"
+#include "stm32g030xx.h"
 
 #define EEPROM_START_ADDR 0X08080000
 #define EEPROM_END_ADDR   0X0808007c

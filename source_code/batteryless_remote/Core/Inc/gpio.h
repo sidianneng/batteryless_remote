@@ -32,13 +32,42 @@ extern "C" {
 /* USER CODE END Includes */
 
 /* USER CODE BEGIN Private defines */
+#define IR_RUN_MODE_PORT GPIOA
+#define IR_RUN_MODE_PIN LL_GPIO_PIN_3
+
+#define IR_BUTTON_POWER_PORT GPIOA
+#define IR_BUTTON_POWER_PIN  LL_GPIO_PIN_4
+#define IR_BUTTON1_PORT GPIOA
+#define IR_BUTTON1_PIN  LL_GPIO_PIN_5
+#define IR_BUTTON2_PORT GPIOA
+#define IR_BUTTON2_PIN  LL_GPIO_PIN_6
+#define IR_BUTTON3_PORT GPIOA
+#define IR_BUTTON3_PIN  LL_GPIO_PIN_7
+
+typedef enum {
+  IR_OUTPUT_MODE = 0,
+  IR_LEARN_MODE,
+}Run_Mode_t;
+
+typedef enum {
+  BUTTON_POWER = 0,
+  BUTTON_1,
+  BUTTON_2,
+  BUTTON_3,
+  BUTTON_MAX
+}Button_Id_t;
+
+typedef struct {
+  uint32_t port;
+  uint32_t pin;
+}Button_List;
 
 /* USER CODE END Private defines */
 
 void MX_GPIO_Init(void);
 
 /* USER CODE BEGIN Prototypes */
-
+Run_Mode_t Get_Run_Mode(void);
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus

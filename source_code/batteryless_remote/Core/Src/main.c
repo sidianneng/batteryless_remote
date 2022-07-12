@@ -67,7 +67,7 @@ void SystemClock_Config(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
+  Button_Id_t button_id = BUTTON_MAX;
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -95,10 +95,24 @@ int main(void)
   Log_Init();
   Log_Printf("batteryless remote start\n");
 
-  hxd019_init();
-  hxd019_learn(2);
   /* USER CODE BEGIN 2 */
-
+  if(Get_Run_Mode() == IR_OUTPUT_MODE)
+  {
+    while(1)
+    {
+      button_id = Ir_Get_Button();
+      if(button_id != BUTTON_MAX)
+        Ir_Output(button_id);
+    }
+  }
+  else
+  {
+    while(1){
+      button_id = Ir_Get_Button();
+      if(button_id != BUTTON_MAX)
+        Ir_Learn(button_id);
+    }
+  }
   /* USER CODE END 2 */
 
   /* Infinite loop */
