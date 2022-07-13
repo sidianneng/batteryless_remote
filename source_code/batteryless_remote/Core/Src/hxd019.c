@@ -358,9 +358,6 @@ hxd019_learn(uint8_t method, uint8_t *output_data, uint8_t size)
 			}
 			else
 			{
-				for(uint8_t i = 2;i < 232; ++i)
-				    HXD019_PRINTF("0x%02x ", hxd_learn_data[i]);
-				HXD019_PRINTF("\n");
 				break;
 			}
 		}
@@ -375,8 +372,13 @@ hxd019_learn(uint8_t method, uint8_t *output_data, uint8_t size)
 
 	hxd_learn_data[0] = 0x30;
 	hxd_learn_data[1] = 0x03;
-	for(uint8_t i  = 0;i < sizeof(hxd_learn_data) - 2; ++i)
-		checksum += hxd_learn_data[i];
+	checksum += hxd_learn_data[0];
+	checksum += hxd_learn_data[1];
+	for(uint8_t i  = 3;i < sizeof(hxd_learn_data) - 1; ++i)
+	{
+		hxd_learn_data[i - 1] = hxd_learn_data[i];
+		checksum += hxd_learn_data[i - 1];
+	}
 	hxd_learn_data[sizeof(hxd_learn_data) - 1] = checksum;
 	memcpy(output_data, hxd_learn_data, size);
 
