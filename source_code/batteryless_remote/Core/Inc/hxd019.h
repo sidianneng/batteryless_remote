@@ -8,8 +8,8 @@
 *  i2cÒý½Å¶¨Òå
 */
 #define SCL_PIN_MUX		0
-#define SCL_PIN_FUNC	GPIOA
-#define SCL_PIN			LL_GPIO_PIN_0
+#define SCL_PIN_FUNC	GPIOC
+#define SCL_PIN			LL_GPIO_PIN_15
 #define SDA_PIN_MUX		0
 #define SDA_PIN_FUNC	GPIOA
 #define SDA_PIN			LL_GPIO_PIN_1
