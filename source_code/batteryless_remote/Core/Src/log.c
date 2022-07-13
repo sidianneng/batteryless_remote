@@ -2,7 +2,7 @@
  * @Author: bbear2 bbear_mail@163.com
  * @Date: 2022-06-10 00:27:52
  * @LastEditors: bbear2 bbear_mail@163.com
- * @LastEditTime: 2022-07-12 00:25:27
+ * @LastEditTime: 2022-07-13 22:12:31
  * @FilePath: \batteryless_remote\Core\Src\log.c
  * @Description: 日志系统实现
  */
@@ -34,8 +34,8 @@ int8_t Log_Printf(char *fmt, ...)
     va_end(arg_ptr);
 
     while(i < length) {
-        LL_USART_TransmitData8(USART2, log_buf[i++]);
-        while(LL_USART_IsActiveFlag_TC(USART2) == 0){
+        LL_USART_TransmitData8(USART1, log_buf[i++]);
+        while(LL_USART_IsActiveFlag_TC(USART1) == 0){
             if(time_cnt++ > 1000)
                 return -1;
         }
