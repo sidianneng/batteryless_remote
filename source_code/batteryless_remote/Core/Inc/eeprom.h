@@ -17,11 +17,11 @@ extern "C" {
 #include "stdint.h"
 #include "stm32g030xx.h"
 
-#define EEPROM_START_ADDR 0X08080000
-#define EEPROM_END_ADDR   0X0808007c
+#define EEPROM_START_ADDR 0x08007000
+#define EEPROM_END_ADDR   0x08007fff
 
-#define FLASH_PEKEY1 0x89ABCDEF
-#define FLASH_PEKEY2 0x02030405
+#define FLASH_PEKEY1 0x45670123
+#define FLASH_PEKEY2 0xcdef89ab
 
 int16_t eeprom_read(uint32_t *addr, uint32_t *buf, uint16_t size);
 int16_t eeprom_write(uint32_t *addr, uint32_t *buf, uint16_t size, uint32_t timeout);

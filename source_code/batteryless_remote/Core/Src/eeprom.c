@@ -27,15 +27,15 @@ int16_t eeprom_read(uint32_t *addr, uint32_t *buf, uint16_t size)
         addr < EEPROM_START_ADDR || !buf || !size)
         return -IR_INVAL;
 
-    // //read data from eeprom
-    // while(i < size)
-    // {
-    //     if(addr + i > EEPROM_END_ADDR)
-    //         break;
-    //     buf[i] = *(addr + i);
-    //     i++;
-    // }
-    // result = i;
+    //read data from eeprom
+    while(i < size)
+    {
+        if(addr + i > EEPROM_END_ADDR)
+            break;
+        buf[i] = *(addr + i);
+        i++;
+    }
+    result = i;
 
     return result;
 }
@@ -59,45 +59,71 @@ int16_t eeprom_write(uint32_t *addr, uint32_t *buf, uint16_t size, uint32_t time
         addr < EEPROM_START_ADDR || !buf || !size)
         return -IR_INVAL;
 
-    // //unlock the eeprom
-    // while ((FLASH->SR & FLASH_SR_BSY) != 0)
-    // {
-    //     if(timeout == 0 || time_cnt >= timeout)
-    //     {
-    //         result = -IR_TIMEOUT;
-    //         goto exit;
-    //     }
-    //     time_cnt++;
-    //     LL_mDelay(1);
-    // }    
-    // if ((FLASH->PECR & FLASH_PECR_PELOCK) != 0)
-    // {
-    //     FLASH->PEKEYR = FLASH_PEKEY1;
-    //     FLASH->PEKEYR = FLASH_PEKEY2;
-    // }
-    
-    // //write data to eeprom
-    // while(i < size)
-    // {
-    //     if(addr + i > EEPROM_END_ADDR)
-    //         break;
-    //     *(addr + i) = buf[i];
-    //     i++;
-    // }
-    // result = i;
+    //Unlock the internal flash
+    while ((FLASH->SR & 0x00010000) != 0)
+    {
+        if(timeout == 0 || time_cnt >= timeout)
+        {
+            result = -IR_TIMEOUT;
+            goto exit;
+        }
+        time_cnt++;
+        LL_mDelay(1000);
+    }    
+    if(FLASH->CR & 0x80000000)
+    {
+        FLASH->KEYR = FLASH_PEKEY1;
+        FLASH->KEYR = FLASH_PEKEY2;
+        if(FLASH->CR & 0x80000000)
+        {
+            Log_Printf("Unlock flash error\n");
+            return -IR_ERROR;
+        }
+    }
 
-    // //lock the eeprom again
-    // while ((FLASH->SR & FLASH_SR_BSY) != 0)
-    // {
-    //     if(timeout == 0 || time_cnt >= timeout)
-    //     {
-    //         result = -IR_TIMEOUT;
-    //         goto exit;
-    //     }
-    //     time_cnt++;
-    //     LL_mDelay(1);
-    // }
-    // FLASH->PECR |= FLASH_PECR_PELOCK;
+    //Clear the error bit
+    FLASH->SR |= 0x000083FB;
+
+    //Write data to eeprom
+    FLASH->CR |= 0x00000001;
+    while(i < size)
+    {
+        if(addr + i > EEPROM_END_ADDR)
+            break;
+        *(addr + i) = buf[i];
+        *(addr + i + 1) = buf[i + 1];
+        i += 2;
+    }
+    result = i;
+
+    //Wait for flash write finish
+    while ((FLASH->SR & 0x00010000) != 0)
+    {
+        if(timeout == 0 || time_cnt >= timeout)
+        {
+            result = -IR_TIMEOUT;
+            goto exit;
+        }
+        time_cnt++;
+        LL_mDelay(1000);
+    }
+
+    //Clear EOP bit in SR
+    if(FLASH->SR & 0x00000001)
+    {
+        FLASH->SR |= 0x00000001;
+    }
+
+    //Clear PG bit in CR
+    FLASH->CR &= ~0x00000001;
+
+    //Lock the internal flash
+    FLASH->CR |= 0x80000000;
+    if(FLASH->CR & 0x80000000 == 0x00000000)
+    {
+        Log_Printf("Lock flash error\n");
+        return -IR_ERROR;
+    }
 
 exit:
     return result;
