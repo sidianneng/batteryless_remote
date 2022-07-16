@@ -3,10 +3,10 @@
  * @Date: 2022-07-02 14:46:52
  * @LastEditors: bbear2 bbear_mail@163.com
  * @LastEditTime: 2022-07-13 01:02:07
- * @FilePath: \batteryless_remote\Core\Src\eeprom.c
+ * @FilePath: \batteryless_remote\Core\Src\flash.c
  * @Description: internal flash read/write implementation
  */
-#include "eeprom.h"
+#include "flash.h"
 #include "log.h"
 
 /**
@@ -16,7 +16,7 @@
  * @param {uint16_t} size
  * @return {*}
  */
-int16_t eeprom_read(uint32_t *addr, uint8_t *buf, uint16_t size)
+int16_t flash_read(uint32_t *addr, uint8_t *buf, uint16_t size)
 {
     uint32_t result = IR_OK;
     uint16_t i = 0, j = 0;
@@ -27,7 +27,7 @@ int16_t eeprom_read(uint32_t *addr, uint8_t *buf, uint16_t size)
         addr < IRDATA_START_ADDR || !buf || !size)
         return -IR_INVAL;
 
-    //read data from eeprom
+    //read data from flash
     while(i < size / 4)
     {
         if(addr + i * 4 > IRDATA_END_ADDR)
@@ -59,14 +59,14 @@ exit:
 }
 
 /**
- * @description: eeprom write
+ * @description: flash write
  * @param {uin32_t} *addr
  * @param {uint8_t} *buf
  * @param {uint16_t} size
  * @param {uint32_t} timeout unit:ms
  * @return {*}
  */
-int16_t eeprom_write(uint32_t *addr, uint8_t *buf, uint16_t size, uint32_t timeout)
+int16_t flash_write(uint32_t *addr, uint8_t *buf, uint16_t size, uint32_t timeout)
 {
     uint32_t time_cnt = 0;//ms
     uint32_t result = IR_OK;
@@ -106,7 +106,7 @@ int16_t eeprom_write(uint32_t *addr, uint8_t *buf, uint16_t size, uint32_t timeo
     //Clear the error bit
     FLASH->SR |= 0x000083FB;
 
-    //Write data to eeprom
+    //Write data to flash
     FLASH->CR |= 0x00000001;
     size_of_uint32 = size / 4;
     while(i < size_of_uint32)

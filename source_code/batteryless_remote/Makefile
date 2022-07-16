@@ -50,7 +50,7 @@ Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_ll_dma.c \
 Core/Src/system_stm32g0xx.c \
 Core/Src/log.c \
 Core/Src/hxd019.c \
-Core/Src/eeprom.c \
+Core/Src/flash.c \
 Core/Src/ir_app.c 
 
 # ASM sources
