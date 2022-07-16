@@ -23,6 +23,7 @@
 #include "gpio.h"
 #include "log.h"
 #include "hxd019.h"
+#include "flash.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -98,19 +99,28 @@ int main(void)
   /* USER CODE BEGIN 2 */
   if(Get_Run_Mode() == IR_OUTPUT_MODE)
   {
-    while(1)
+    Log_Printf("IR OUTPUT MODE\n");
+    //while(1)
     {
       button_id = Ir_Get_Button();
       if(button_id != BUTTON_MAX)
+      {
+        Log_Printf("button id:%d\n", button_id);
         Ir_Output(button_id);
+      }
     }
   }
   else
   {
-    while(1){
+    Log_Printf("IR LEARN MODE\n");
+    //while(1)
+    {
       button_id = Ir_Get_Button();
       if(button_id != BUTTON_MAX)
+      {
+        Log_Printf("button id:%d\n", button_id);
         Ir_Learn(button_id);
+      }
     }
   }
   /* USER CODE END 2 */

@@ -15,7 +15,13 @@ extern "C" {
 
 #include "gpio.h"
 #include "hxd019.h"
-#include "eeprom.h"
+#include "flash.h"
+
+#define IR_DATA_LEN 232
+typedef struct{
+    uint8_t IR_Data[IR_DATA_LEN];
+    uint8_t Data_reserved[256 - IR_DATA_LEN];
+} IR_Data_Flash_t;
 
 void Ir_Output(Button_Id_t button_id);
 void Ir_Learn(Button_Id_t button_id);

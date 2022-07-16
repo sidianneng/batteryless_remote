@@ -10,23 +10,31 @@
 
 void Ir_Output(Button_Id_t button_id)
 {
-    uint8_t output_data[232] = { 0 };
+    IR_Data_Flash_t stored_ir_data;
+
     //1 read data from flash
-    eeprom_read(0x08000000, output_data, sizeof(eeprom_write));
+    flash_read(IRDATA_START_ADDR + button_id * sizeof(IR_Data_Flash_t), \
+        stored_ir_data.IR_Data, sizeof(stored_ir_data.IR_Data));
 
     //2 write data to hxd019
-    hxd019_write(output_data, sizeof(output_data));
+    hxd019_write((uint8_t *)stored_ir_data.IR_Data, sizeof(stored_ir_data.IR_Data));
 
     //delay to wait for the IR waveform output finish
     LL_mDelay(200000);
 }
 void Ir_Learn(Button_Id_t button_id)
 {
-    uint8_t learn_data[232] = { 0 };
+    IR_Data_Flash_t learn_data;
+    int16_t result = IR_OK;
+
+    memset(&learn_data.Data_reserved, 0xff, sizeof(learn_data.Data_reserved));
 
     //1 learn the IR waveform
-    hxd019_learn(2, learn_data, sizeof(learn_data));
+    hxd019_learn(2, &learn_data.IR_Data, sizeof(learn_data.IR_Data));
 
     //2 save data to flash
-    eeprom_write(0x08000000, learn_data, sizeof(learn_data), 100);
+    result = flash_write(IRDATA_START_ADDR + button_id * sizeof(IR_Data_Flash_t), \
+        learn_data.IR_Data, sizeof(learn_data.IR_Data), 100);
+    Log_Printf("flash write ret:%d\n", result);
+
 }
