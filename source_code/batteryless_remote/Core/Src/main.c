@@ -97,36 +97,36 @@ int main(void)
   MX_GPIO_Init();
   Log_Init();
   Log_Printf("batteryless remote start\n");
-  MX_TIM3_Init();
-  LL_GPIO_WriteOutputPort(GPIOB, LL_GPIO_PIN_0);
+  // MX_TIM3_Init();
+  // LL_GPIO_WriteOutputPort(GPIOB, LL_GPIO_PIN_0);
 
   /* USER CODE BEGIN 2 */
-  // if(Get_Run_Mode() == IR_OUTPUT_MODE)
-  // {
-  //   Log_Printf("IR OUTPUT MODE\n");
-  //   //while(1)
-  //   {
-  //     button_id = Ir_Get_Button();
-  //     if(button_id != BUTTON_MAX)
-  //     {
-  //       Log_Printf("button id:%d\n", button_id);
-  //       Ir_Output(button_id);
-  //     }
-  //   }
-  // }
-  // else
-  // {
-  //   Log_Printf("IR LEARN MODE\n");
-  //   //while(1)
-  //   {
-  //     button_id = Ir_Get_Button();
-  //     if(button_id != BUTTON_MAX)
-  //     {
-  //       Log_Printf("button id:%d\n", button_id);
-  //       Ir_Learn(button_id);
-  //     }
-  //   }
-  // }
+  if(Get_Run_Mode() == IR_OUTPUT_MODE)
+  {
+    Log_Printf("IR OUTPUT MODE\n");
+    while(1)
+    {
+      button_id = Ir_Get_Button();
+      if(button_id != BUTTON_MAX)
+      {
+        Log_Printf("button id:%d\n", button_id);
+        Ir_Output(button_id);
+      }
+    }
+  }
+  else
+  {
+    Log_Printf("IR LEARN MODE\n");
+    while(1)
+    {
+      button_id = Ir_Get_Button();
+      if(button_id != BUTTON_MAX)
+      {
+        Log_Printf("button id:%d\n", button_id);
+        Ir_Learn(button_id);
+      }
+    }
+  }
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -134,16 +134,18 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-    LL_mDelay(500000);
-    if(data_cnt >= 20)
-    {
-      for(uint8_t i = 1;i < 20; ++i)
-      {
-        Log_Printf("%d ", data_buf[i]);
-      }
-      Log_Printf("\n");
-      data_cnt = 0;
-    }
+    // LL_mDelay(500000);
+    // if(data_cnt >= 20)
+    // {
+    //   for(uint8_t i = 1;i < 20; ++i)
+    //   {
+    //     Log_Printf("%d ", data_buf[i]);
+    //   }
+    //   Log_Printf("\n");
+    //   data_cnt = 0;
+    // }
+    //LL_mDelay(100000);
+    //Log_Printf("button:%d\n", Ir_Get_Button());
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
