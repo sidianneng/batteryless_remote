@@ -98,7 +98,7 @@ int main(void)
   Log_Init();
   Log_Printf("batteryless remote start\n");
   // MX_TIM3_Init();
-  // LL_GPIO_WriteOutputPort(GPIOB, LL_GPIO_PIN_0);
+  // LL_GPIO_WriteOutputPort(GPIOA, LL_GPIO_PIN_2);
 
   /* USER CODE BEGIN 2 */
   if(Get_Run_Mode() == IR_OUTPUT_MODE)

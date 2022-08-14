@@ -151,7 +151,7 @@ void TIM3_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM3_IRQn 0 */
   LL_TIM_ClearFlag_CC1(TIM3);
-  LL_GPIO_TogglePin(GPIOB, LL_GPIO_PIN_0);
+  LL_GPIO_TogglePin(GPIOA, LL_GPIO_PIN_2);
   if(Trig_Edge == LL_TIM_IC_POLARITY_FALLING)
   {
     Trig_Edge = LL_TIM_IC_POLARITY_RISING;
