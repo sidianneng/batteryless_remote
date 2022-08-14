@@ -17,6 +17,8 @@ extern "C" {
 #include "stdint.h"
 #include "stm32g030xx.h"
 
+/* flash config */
+#define FLASH_PAGE_SIZE 2048
 #define IRDATA_START_ADDR 0x08007000
 #define IRDATA_END_ADDR   0x08007fff
 
