@@ -25,6 +25,7 @@
 #include "hxd019.h"
 #include "flash.h"
 #include "tim.h"
+#include "ir_decode.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -59,8 +60,7 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-extern uint16_t data_buf[];
-extern uint8_t data_cnt;
+
 /* USER CODE END 0 */
 
 /**
@@ -97,36 +97,36 @@ int main(void)
   MX_GPIO_Init();
   Log_Init();
   Log_Printf("batteryless remote start\n");
-  // MX_TIM3_Init();
-  // LL_GPIO_WriteOutputPort(GPIOA, LL_GPIO_PIN_2);
+  MX_TIM3_Init();
+  LL_GPIO_WriteOutputPort(GPIOA, LL_GPIO_PIN_2);
 
   /* USER CODE BEGIN 2 */
-  if(Get_Run_Mode() == IR_OUTPUT_MODE)
-  {
-    Log_Printf("IR OUTPUT MODE\n");
-    while(1)
-    {
-      button_id = Ir_Get_Button();
-      if(button_id != BUTTON_MAX)
-      {
-        Log_Printf("button id:%d\n", button_id);
-        Ir_Output(button_id);
-      }
-    }
-  }
-  else
-  {
-    Log_Printf("IR LEARN MODE\n");
-    while(1)
-    {
-      button_id = Ir_Get_Button();
-      if(button_id != BUTTON_MAX)
-      {
-        Log_Printf("button id:%d\n", button_id);
-        Ir_Learn(button_id);
-      }
-    }
-  }
+  // if(Get_Run_Mode() == IR_OUTPUT_MODE)
+  // {
+  //   Log_Printf("IR OUTPUT MODE\n");
+  //   while(1)
+  //   {
+  //     button_id = Ir_Get_Button();
+  //     if(button_id != BUTTON_MAX)
+  //     {
+  //       Log_Printf("button id:%d\n", button_id);
+  //       Ir_Output(button_id);
+  //     }
+  //   }
+  // }
+  // else
+  // {
+  //   Log_Printf("IR LEARN MODE\n");
+  //   while(1)
+  //   {
+  //     button_id = Ir_Get_Button();
+  //     if(button_id != BUTTON_MAX)
+  //     {
+  //       Log_Printf("button id:%d\n", button_id);
+  //       Ir_Learn(button_id);
+  //     }
+  //   }
+  // }
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -134,16 +134,18 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-    // LL_mDelay(500000);
-    // if(data_cnt >= 20)
-    // {
-    //   for(uint8_t i = 1;i < 20; ++i)
-    //   {
-    //     Log_Printf("%d ", data_buf[i]);
-    //   }
-    //   Log_Printf("\n");
-    //   data_cnt = 0;
-    // }
+    LL_mDelay(500000);
+    if(ir_get_state() == IR_READY)
+    {
+      Log_Printf("total len:%d\n", ir_decode.data_len - 1);
+      for(uint8_t i = 1;i < ir_decode.data_len; ++i)
+      {
+        Log_Printf("%d ", ir_decode.ir_data[i]);
+      }
+      Log_Printf("\n");
+      ir_decode_init();
+      LL_TIM_EnableIT_CC1(TIM3);
+    }
     //LL_mDelay(100000);
     //Log_Printf("button:%d\n", Ir_Get_Button());
     /* USER CODE BEGIN 3 */

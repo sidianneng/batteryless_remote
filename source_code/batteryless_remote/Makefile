@@ -53,7 +53,8 @@ Core/Src/hxd019.c \
 Core/Src/flash.c \
 Core/Src/ir_app.c \
 Core/Src/tim.c \
-Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_ll_tim.c
+Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_ll_tim.c \
+Core/Src/ir_decode.c
 
 # ASM sources
 ASM_SOURCES =  \

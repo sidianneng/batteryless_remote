@@ -19,7 +19,7 @@ extern "C" {
 
 /* flash config */
 #define FLASH_PAGE_SIZE 2048
-#define IRDATA_START_ADDR 0x08007000
+#define IRDATA_START_ADDR 0x08006800
 #define IRDATA_END_ADDR   0x08007fff
 
 #define FLASH_PEKEY1 0x45670123
