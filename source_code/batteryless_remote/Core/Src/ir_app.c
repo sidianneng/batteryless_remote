@@ -8,33 +8,84 @@
  */
 #include "ir_app.h"
 
-void Ir_Output(Button_Id_t button_id)
+int16_t Ir_Output(Button_Id_t button_id)
 {
-    IR_Data_Flash_t stored_ir_data;
-
+    uint16_t temp = 0x0000;
+    int16_t result = IR_OK;
     //1 read data from flash
-    flash_read(IRDATA_START_ADDR + button_id * sizeof(IR_Data_Flash_t), \
-        stored_ir_data.IR_Data, sizeof(stored_ir_data.IR_Data));
+    result = flash_read(IRDATA_START_ADDR + button_id * sizeof(Ir_Decode_t), \
+        &ir_decode, sizeof(ir_decode));
+    if(result != sizeof(ir_decode))
+    {
+        result = -IR_ERROR;
+        goto exit;
+    }
 
     //2 write data to hxd019
-    hxd019_write((uint8_t *)stored_ir_data.IR_Data, sizeof(stored_ir_data.IR_Data));
+    if(ir_decode.data_len > IR_DATA_MAX_LEN)
+    {
+        Log_Printf("Error ir data len:%d\n", ir_decode.data_len);
+        result = -IR_ERROR;
+        goto exit;
+    }
+    for(uint32_t i = 1;i < ir_decode.data_len; ++i)
+    {
+        temp += ir_decode.ir_data[i];
+    }
+    
+    if(temp == ir_decode.check_value && ir_decode.start_tag == START_TAG \
+        && ir_decode.end_tag == END_TAG)
+    {
+#ifdef IR_RAW_DATA_DEBUG
+        for(uint16_t i = 1;i < ir_decode.data_len; ++i)
+            Log_Printf("%d ", ir_decode.ir_data[i]);
+        Log_Printf("\n");
+#endif
+    }
+    else
+    {
+        Log_Printf("flash data error");
+        result = -IR_ERROR;
+    }
 
     //delay to wait for the IR waveform output finish
     LL_mDelay(200000);
+exit:
+    return result;
 }
-void Ir_Learn(Button_Id_t button_id)
+int16_t Ir_Learn(Button_Id_t button_id, uint32_t timeout_ms)
 {
-    IR_Data_Flash_t learn_data;
     int16_t result = IR_OK;
-
-    memset(&learn_data.Data_reserved, 0xff, sizeof(learn_data.Data_reserved));
-
+    uint32_t time_cnt = 0;
     //1 learn the IR waveform
-    hxd019_learn(2, &learn_data.IR_Data, sizeof(learn_data.IR_Data));
+    while(1)
+    {
+        if(ir_get_state() == IR_READY && ir_decode.data_len > 1)
+        {
+            ir_decode.start_tag = START_TAG;
+            ir_decode.end_tag = END_TAG;
+            for(uint16_t i = 1;i < ir_decode.data_len; ++i)
+                ir_decode.check_value += ir_decode.ir_data[i];
+            break;
+        }
+        if(time_cnt++ >= timeout_ms || !timeout_ms)
+        {
+            result = -IR_TIMEOUT;
+            goto exit;
+        }
+        LL_mDelay(1000000);
+    }
+#ifdef IR_RAW_DATA_DEBUG
+    Log_Printf("len:%d chk_val:0x%04x\n", ir_decode.data_len - 1, ir_decode.check_value);
+    for(uint16_t i = 1; i < ir_decode.data_len; ++i)
+        Log_Printf("%d ", ir_decode.ir_data[i]);
+    Log_Printf("\n");
+#endif
 
     //2 save data to flash
-    result = flash_write(IRDATA_START_ADDR + button_id * sizeof(IR_Data_Flash_t), \
-        learn_data.IR_Data, sizeof(learn_data.IR_Data), 100);
-    Log_Printf("flash write ret:%d\n", result);
+    result = flash_write(IRDATA_START_ADDR + button_id * sizeof(Ir_Decode_t), \
+        &ir_decode, sizeof(Ir_Decode_t), 100);
 
+exit:
+    return result;
 }

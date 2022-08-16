@@ -101,32 +101,34 @@ int main(void)
   LL_GPIO_WriteOutputPort(GPIOA, LL_GPIO_PIN_2);
 
   /* USER CODE BEGIN 2 */
-  // if(Get_Run_Mode() == IR_OUTPUT_MODE)
-  // {
-  //   Log_Printf("IR OUTPUT MODE\n");
-  //   while(1)
-  //   {
-  //     button_id = Ir_Get_Button();
-  //     if(button_id != BUTTON_MAX)
-  //     {
-  //       Log_Printf("button id:%d\n", button_id);
-  //       Ir_Output(button_id);
-  //     }
-  //   }
-  // }
-  // else
-  // {
-  //   Log_Printf("IR LEARN MODE\n");
-  //   while(1)
-  //   {
-  //     button_id = Ir_Get_Button();
-  //     if(button_id != BUTTON_MAX)
-  //     {
-  //       Log_Printf("button id:%d\n", button_id);
-  //       Ir_Learn(button_id);
-  //     }
-  //   }
-  // }
+  if(Get_Run_Mode() == IR_OUTPUT_MODE)
+  {
+    Log_Printf("IR OUTPUT MODE\n");
+    while(1)
+    {
+      button_id = Ir_Get_Button();
+      if(button_id != BUTTON_MAX)
+      {
+        Log_Printf("button id:%d\n", button_id);
+        Log_Printf("output ret:%d\n", Ir_Output(button_id));
+      }
+    }
+  }
+  else
+  {
+    Log_Printf("IR LEARN MODE\n");
+    while(1)
+    {
+      button_id = Ir_Get_Button();
+      if(button_id != BUTTON_MAX)
+      {
+        Log_Printf("button id:%d\n", button_id);
+        Log_Printf("learn ret:%d\n", Ir_Learn(button_id, 10));
+        ir_decode_init();
+        LL_TIM_EnableIT_CC1(TIM3);
+      }
+    }
+  }
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -134,18 +136,18 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-    LL_mDelay(500000);
-    if(ir_get_state() == IR_READY)
-    {
-      Log_Printf("total len:%d\n", ir_decode.data_len - 1);
-      for(uint8_t i = 1;i < ir_decode.data_len; ++i)
-      {
-        Log_Printf("%d ", ir_decode.ir_data[i]);
-      }
-      Log_Printf("\n");
-      ir_decode_init();
-      LL_TIM_EnableIT_CC1(TIM3);
-    }
+    // LL_mDelay(500000);
+    // if(ir_get_state() == IR_READY)
+    // {
+    //   Log_Printf("total len:%d\n", ir_decode.data_len - 1);
+    //   for(uint8_t i = 1;i < ir_decode.data_len; ++i)
+    //   {
+    //     Log_Printf("%d ", ir_decode.ir_data[i]);
+    //   }
+    //   Log_Printf("\n");
+    //   ir_decode_init();
+    //   LL_TIM_EnableIT_CC1(TIM3);
+    // }
     //LL_mDelay(100000);
     //Log_Printf("button:%d\n", Ir_Get_Button());
     /* USER CODE BEGIN 3 */

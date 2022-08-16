@@ -16,6 +16,8 @@ extern "C" {
 #define DEBUG_LOG 1
 #define MAX_LOG_BUF_LEN 64U
 
+#define IR_RAW_DATA_DEBUG
+
 #ifdef __cplusplus
 }
 #endif
