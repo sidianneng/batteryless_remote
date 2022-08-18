@@ -99,6 +99,7 @@ int main(void)
   Log_Printf("batteryless remote start\n");
   MX_TIM3_Init();
   MX_TIM14_Init();
+  MX_TIM16_Init();
   LL_GPIO_WriteOutputPort(GPIOA, LL_GPIO_PIN_2);
 
   /* USER CODE BEGIN 2 */

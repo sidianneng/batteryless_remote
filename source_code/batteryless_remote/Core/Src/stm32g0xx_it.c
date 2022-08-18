@@ -22,6 +22,7 @@
 #include "main.h"
 #include "stm32g0xx_it.h"
 #include "ir_decode.h"
+#include "log.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 /* USER CODE END Includes */
@@ -197,6 +198,28 @@ void TIM3_IRQHandler(void)
 }
 
 /* USER CODE BEGIN 1 */
+/**
+  * @brief This function handles TIM16 global interrupt.
+  */
+void TIM16_IRQHandler(void)
+{
+  static uint16_t cnt = 1;
+  /* USER CODE BEGIN TIM16_IRQn 0 */
+  LL_TIM_ClearFlag_UPDATE(TIM16);
+  if(cnt <= ir_decode.data_len){
+    LL_TIM_SetAutoReload(TIM16, ir_decode.ir_data[cnt++]);
+    //LL_GPIO_TogglePin(GPIOA, LL_GPIO_PIN_7);
+    if(cnt % 2)
+      LL_TIM_EnableCounter(TIM14);
+    else
+      LL_TIM_DisableCounter(TIM14);
+  } else {
+    LL_TIM_DisableCounter(TIM16);
+  }
+  /* USER CODE END TIM16_IRQn 0 */
+  /* USER CODE BEGIN TIM16_IRQn 1 */
 
+  /* USER CODE END TIM16_IRQn 1 */
+}
 /* USER CODE END 1 */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

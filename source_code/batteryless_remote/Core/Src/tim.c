@@ -127,7 +127,41 @@ void MX_TIM14_Init(void)
   LL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
   LL_TIM_CC_EnableChannel(TIM14, LL_TIM_CHANNEL_CH1);
-  LL_TIM_EnableCounter(TIM14);
+  //LL_TIM_EnableCounter(TIM14);
+
+}
+
+/* TIM16 init function */
+void MX_TIM16_Init(void)
+{
+
+  /* USER CODE BEGIN TIM16_Init 0 */
+
+  /* USER CODE END TIM16_Init 0 */
+
+  LL_TIM_InitTypeDef TIM_InitStruct = {0};
+
+  /* Peripheral clock enable */
+  LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_TIM16);
+
+  /* TIM16 interrupt Init */
+  NVIC_SetPriority(TIM16_IRQn, 0);
+  NVIC_EnableIRQ(TIM16_IRQn);
+
+  /* USER CODE BEGIN TIM16_Init 1 */
+
+  /* USER CODE END TIM16_Init 1 */
+  TIM_InitStruct.Prescaler = 15;
+  TIM_InitStruct.CounterMode = LL_TIM_COUNTERMODE_UP;
+  TIM_InitStruct.Autoreload = 65535;
+  TIM_InitStruct.ClockDivision = LL_TIM_CLOCKDIVISION_DIV1;
+  TIM_InitStruct.RepetitionCounter = 0;
+  LL_TIM_Init(TIM16, &TIM_InitStruct);
+  LL_TIM_EnableARRPreload(TIM16);
+  /* USER CODE BEGIN TIM16_Init 2 */
+  LL_TIM_EnableIT_UPDATE(TIM16);
+  //LL_TIM_EnableCounter(TIM16);
+  /* USER CODE END TIM16_Init 2 */
 
 }
 /* USER CODE END 1 */
