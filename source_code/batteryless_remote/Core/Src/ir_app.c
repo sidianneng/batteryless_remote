@@ -37,6 +37,7 @@ int16_t Ir_Output(Button_Id_t button_id)
         && ir_decode.end_tag == END_TAG)
     {
 #ifdef IR_RAW_DATA_DEBUG
+    Log_Printf("output len:%d chk_val:0x%04x\n", ir_decode.data_len - 1, ir_decode.check_value);
         for(uint16_t i = 1;i < ir_decode.data_len; ++i)
             Log_Printf("%d ", ir_decode.ir_data[i]);
         Log_Printf("\n");
@@ -49,6 +50,9 @@ int16_t Ir_Output(Button_Id_t button_id)
         goto exit;
     }
 
+    //LL_TIM_EnableCounter(TIM16);
+    Log_Printf("data cnt:%d\n", ir_decode.data_len);
+    LL_TIM_EnableIT_UPDATE(TIM16);
     LL_TIM_EnableCounter(TIM16);
 
     //delay to wait for the IR waveform output finish
@@ -79,7 +83,7 @@ int16_t Ir_Learn(Button_Id_t button_id, uint32_t timeout_ms)
         LL_mDelay(1000000);
     }
 #ifdef IR_RAW_DATA_DEBUG
-    Log_Printf("len:%d chk_val:0x%04x\n", ir_decode.data_len - 1, ir_decode.check_value);
+    Log_Printf("learn len:%d chk_val:0x%04x\n", ir_decode.data_len - 1, ir_decode.check_value);
     for(uint16_t i = 1; i < ir_decode.data_len; ++i)
         Log_Printf("%d ", ir_decode.ir_data[i]);
     Log_Printf("\n");

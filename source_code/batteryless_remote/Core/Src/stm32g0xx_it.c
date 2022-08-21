@@ -206,15 +206,19 @@ void TIM16_IRQHandler(void)
   static uint16_t cnt = 1;
   /* USER CODE BEGIN TIM16_IRQn 0 */
   LL_TIM_ClearFlag_UPDATE(TIM16);
-  if(cnt <= ir_decode.data_len){
-    LL_TIM_SetAutoReload(TIM16, ir_decode.ir_data[cnt++]);
-    //LL_GPIO_TogglePin(GPIOA, LL_GPIO_PIN_7);
-    if(cnt % 2)
+  if(cnt < ir_decode.data_len){
+    LL_TIM_SetAutoReload(TIM16, ir_decode.ir_data[cnt]);
+    if(cnt % 2){
       LL_TIM_EnableCounter(TIM14);
-    else
+    } else {
       LL_TIM_DisableCounter(TIM14);
+    }
+    cnt++;
   } else {
+    cnt = 1;
     LL_TIM_DisableCounter(TIM16);
+    LL_TIM_DisableIT_UPDATE(TIM16);
+    LL_TIM_DisableCounter(TIM14);
   }
   /* USER CODE END TIM16_IRQn 0 */
   /* USER CODE BEGIN TIM16_IRQn 1 */
