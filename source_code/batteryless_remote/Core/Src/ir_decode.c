@@ -22,5 +22,6 @@ int8_t ir_decode_init()
     ir_decode.start_tag = START_TAG;
     ir_decode.end_tag = END_TAG;
     ir_decode.data_len = 0;
+    ir_decode.check_value = 0;
     return IR_OK;
 }
