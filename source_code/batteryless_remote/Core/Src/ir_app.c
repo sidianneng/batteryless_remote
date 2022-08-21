@@ -93,6 +93,12 @@ int16_t Ir_Learn(Button_Id_t button_id, uint32_t timeout_ms)
     result = flash_write(IRDATA_START_ADDR + button_id * sizeof(Ir_Decode_t), \
         &ir_decode, sizeof(Ir_Decode_t), 100);
 
+    //light user led to notify the use
+    for(uint8_t i = 0;i < 10; ++i){
+        LL_mDelay(100000);
+        LL_GPIO_TogglePin(GPIOA, LL_GPIO_PIN_2);
+    }
+
 exit:
     return result;
 }

@@ -153,7 +153,6 @@ void TIM3_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM3_IRQn 0 */
   LL_TIM_ClearFlag_CC1(TIM3);
-  LL_GPIO_TogglePin(GPIOA, LL_GPIO_PIN_2);
   if(ir_decode.data_len < IR_DATA_MAX_LEN)
     ir_decode.ir_data[ir_decode.data_len] = LL_TIM_IC_GetCaptureCH1(TIM3);
   if(Trig_Edge == LL_TIM_IC_POLARITY_FALLING)
