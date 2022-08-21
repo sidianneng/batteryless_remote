@@ -45,7 +45,7 @@ int16_t Ir_Output(Button_Id_t button_id)
     }
     else
     {
-        Log_Printf("flash data error");
+        Log_Printf("flash data error\n");
         result = -IR_ERROR;
         goto exit;
     }

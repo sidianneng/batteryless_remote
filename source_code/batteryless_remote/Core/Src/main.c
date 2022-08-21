@@ -125,9 +125,11 @@ int main(void)
       if(button_id != BUTTON_MAX)
       {
         Log_Printf("button id:%d\n", button_id);
-        Log_Printf("learn ret:%d\n", Ir_Learn(button_id, 10));
         ir_decode_init();
+        LL_TIM_CC_EnableChannel(TIM3, LL_TIM_CHANNEL_CH1);
         LL_TIM_EnableIT_CC1(TIM3);
+        LL_TIM_EnableCounter(TIM3);
+        Log_Printf("learn ret:%d\n", Ir_Learn(button_id, 10));
       }
     }
   }

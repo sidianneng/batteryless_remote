@@ -152,47 +152,46 @@ static uint16_t h_max_time = 0;
 void TIM3_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM3_IRQn 0 */
-  LL_TIM_ClearFlag_CC1(TIM3);
-  if(ir_decode.data_len < IR_DATA_MAX_LEN)
-    ir_decode.ir_data[ir_decode.data_len] = LL_TIM_IC_GetCaptureCH1(TIM3);
-  if(Trig_Edge == LL_TIM_IC_POLARITY_FALLING)
+  if(LL_TIM_IsActiveFlag_CC1(TIM3))
   {
-    Trig_Edge = LL_TIM_IC_POLARITY_RISING;
-    LL_TIM_IC_SetPolarity(TIM3, LL_TIM_CHANNEL_CH1, LL_TIM_IC_POLARITY_RISING);
-      if(ir_decode.data_len > 0)
-        h_max_time = (h_max_time > ir_decode.ir_data[ir_decode.data_len] ? \
-          h_max_time : ir_decode.ir_data[ir_decode.data_len]);
-      if(h_max_time > l_max_time * 2){
-        LL_TIM_DisableIT_CC1(TIM3);
-        l_max_time = 0;
-        h_max_time = 0;
-        ir_set_state(IR_READY);
-        return ;
-      }
+    LL_TIM_ClearFlag_CC1(TIM3);
+    if(ir_decode.data_len < IR_DATA_MAX_LEN)
+      ir_decode.ir_data[ir_decode.data_len] = LL_TIM_IC_GetCaptureCH1(TIM3);
+    if(Trig_Edge == LL_TIM_IC_POLARITY_FALLING)
+    {
+      Trig_Edge = LL_TIM_IC_POLARITY_RISING;
+      LL_TIM_IC_SetPolarity(TIM3, LL_TIM_CHANNEL_CH1, LL_TIM_IC_POLARITY_RISING);
+        if(ir_decode.data_len > 0)
+          h_max_time = (h_max_time > ir_decode.ir_data[ir_decode.data_len] ? \
+            h_max_time : ir_decode.ir_data[ir_decode.data_len]);
+        if(h_max_time > l_max_time * 2 || LL_TIM_IsActiveFlag_CC1OVR(TIM3)){
+          LL_TIM_ClearFlag_CC1OVR(TIM3);
+          LL_TIM_CC_DisableChannel(TIM3, LL_TIM_CHANNEL_CH1);
+          LL_TIM_DisableIT_CC1(TIM3);
+          LL_TIM_DisableCounter(TIM3);
+          l_max_time = 0;
+          h_max_time = 0;
+          Trig_Edge = LL_TIM_IC_POLARITY_FALLING;
+          LL_TIM_IC_SetPolarity(TIM3, LL_TIM_CHANNEL_CH1, LL_TIM_IC_POLARITY_FALLING);
+          ir_set_state(IR_READY);
+          return ;
+        }
+    }
+    else
+    {
+      Trig_Edge = LL_TIM_IC_POLARITY_FALLING;
+      LL_TIM_IC_SetPolarity(TIM3, LL_TIM_CHANNEL_CH1, LL_TIM_IC_POLARITY_FALLING);
+        if(ir_decode.data_len > 0)
+          l_max_time = (l_max_time > ir_decode.ir_data[ir_decode.data_len] ? \
+            l_max_time : ir_decode.ir_data[ir_decode.data_len]);
+    }
+    if(ir_decode.data_len < IR_DATA_MAX_LEN)
+      ir_decode.data_len++;
   }
-  else
-  {
-    Trig_Edge = LL_TIM_IC_POLARITY_FALLING;
-    LL_TIM_IC_SetPolarity(TIM3, LL_TIM_CHANNEL_CH1, LL_TIM_IC_POLARITY_FALLING);
-      if(ir_decode.data_len > 0)
-        l_max_time = (l_max_time > ir_decode.ir_data[ir_decode.data_len] ? \
-          l_max_time : ir_decode.ir_data[ir_decode.data_len]);
-  }
-  if(ir_decode.data_len < IR_DATA_MAX_LEN)
-    ir_decode.data_len++;
   LL_TIM_SetCounter(TIM3, 0);
-  LL_TIM_ClearFlag_CC1(TIM3);
   /* USER CODE END TIM3_IRQn 0 */
   /* USER CODE BEGIN TIM3_IRQn 1 */
-  if(LL_TIM_IsActiveFlag_CC1OVR(TIM3))
-  {
-    LL_TIM_ClearFlag_CC1OVR(TIM3);
-    LL_TIM_DisableIT_CC1(TIM3);
-    l_max_time = 0;
-    h_max_time = 0;
-    ir_set_state(IR_READY);
-    return ;
-  }
+
   /* USER CODE END TIM3_IRQn 1 */
 }
 
