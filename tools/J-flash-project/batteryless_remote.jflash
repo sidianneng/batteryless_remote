@@ -3,7 +3,7 @@
 [GENERAL]
   aATEModuleSel[24] = 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
   ConnectMode = 0
-  CurrentFile = "D:\做点事情\公众号\17无电池红外遥控器改进版\source_code\batteryless_remote\source_code\batteryless_remote\build\batteryless_remote.hex"
+  CurrentFile = "D:\做点事情\公众号\17无电池红外遥控器改进版\source_code\batteryless_remote\source_code\batteryless_remote\build\IR_ctl.hex"
   DataFileSAddr = 0x00000000
   GUIMode = 0
   HostName = ""
@@ -33,20 +33,26 @@
   ScriptFile = ""
   UseRAM = 1
   RAMAddr = 0x20000000
-  RAMSize = 0x00000800
+  RAMSize = 0x00002000
   CheckCoreID = 1
   CoreID = 0x0BC11477
   CoreIDMask = 0x0F000FFF
   UseAutoSpeed = 0x00000001
   ClockSpeed = 0x00000000
   EndianMode = 0
-  ChipName = "ST STM32L011F4"
+  ChipName = "ST STM32G030F6"
 [FLASH]
-  aRangeSel[1] = 0-128
-  BankName = "Internal flash"
+  NumBanks = 2
+[FLASH0]
+  aRangeSel[1] = 0-15
+  BankName = "Internal program flash"
   BankSelMode = 1
   BaseAddr = 0x08000000
-  NumBanks = 1
+[FLASH1]
+  aRangeSel[1] = 0-2
+  BankName = "Option bytes"
+  BankSelMode = 1
+  BaseAddr = 0x1FFF7800
 [PRODUCTION]
   AutoPerformsDisconnect = 0
   AutoPerformsErase = 1
