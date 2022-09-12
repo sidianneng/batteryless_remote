@@ -171,6 +171,7 @@ void SystemClock_Config(void)
   {
   }
 
+  LL_RCC_SetHSIDiv(LL_RCC_HSI_DIV_8);
   /* Set AHB prescaler*/
   LL_RCC_SetAHBPrescaler(LL_RCC_SYSCLK_DIV_1);
 
@@ -183,10 +184,10 @@ void SystemClock_Config(void)
   /* Set APB1 prescaler*/
   LL_RCC_SetAPB1Prescaler(LL_RCC_APB1_DIV_1);
 
-  LL_Init1msTick(16000000);
+  LL_Init1msTick(2000000);
 
   /* Update CMSIS variable (which can be updated also through SystemCoreClockUpdate function) */
-  LL_SetSystemCoreClock(16000000);
+  LL_SetSystemCoreClock(2000000);
   LL_RCC_SetUSARTClockSource(LL_RCC_USART1_CLKSOURCE_PCLK1);
 }
 
