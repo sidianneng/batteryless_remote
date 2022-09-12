@@ -29,6 +29,7 @@ extern "C" {
 
 /* Includes ------------------------------------------------------------------*/
 
+#include "stm32g0xx_ll_adc.h"
 #include "stm32g0xx_ll_rcc.h"
 #include "stm32g0xx_ll_bus.h"
 #include "stm32g0xx_ll_system.h"

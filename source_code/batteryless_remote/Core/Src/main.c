@@ -100,6 +100,7 @@ int main(void)
   MX_TIM3_Init();
   MX_TIM14_Init();
   MX_TIM16_Init();
+  MX_ADC1_Init();
   LL_GPIO_WriteOutputPort(GPIOA, LL_GPIO_PIN_2);
 
   /* USER CODE BEGIN 2 */
@@ -154,6 +155,8 @@ int main(void)
     // }
     //LL_mDelay(100000);
     //Log_Printf("button:%d\n", Ir_Get_Button());
+    //LL_mDelay(10000);
+    //Log_Printf("adc data: %d\n", LL_ADC_REG_ReadConversionData12(ADC1));
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
