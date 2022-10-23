@@ -239,4 +239,15 @@ void TIM16_IRQHandler(void)
   /* USER CODE END TIM16_IRQn 1 */
 }
 /* USER CODE END 1 */
+
+void EXTI4_15_IRQHandler(void)
+{
+  if (LL_EXTI_IsActiveRisingFlag_0_31(LL_EXTI_LINE_9) != RESET)
+  {
+    LL_EXTI_ClearRisingFlag_0_31(LL_EXTI_LINE_9);
+    /* USER CODE BEGIN LL_EXTI_LINE_9_RISING */
+    Log_Printf("EXTI 4 15\n");
+    /* USER CODE END LL_EXTI_LINE_9_RISING */
+  }
+}
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

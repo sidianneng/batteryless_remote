@@ -55,7 +55,7 @@
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
-
+void EnterSTOP0Mode(void);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -103,37 +103,42 @@ int main(void)
   MX_ADC1_Init();
   LL_GPIO_WriteOutputPort(GPIOA, LL_GPIO_PIN_2);
 
+  LL_mDelay(500000);
+  Log_Printf("enter stop mode\n");
+  EnterSTOP0Mode();
+  Log_Printf("wake up from stop mode\n");
+
   /* USER CODE BEGIN 2 */
-  if(Get_Run_Mode() == IR_OUTPUT_MODE)
-  {
-    Log_Printf("IR OUTPUT MODE\n");
-    while(1)
-    {
-      button_id = Ir_Get_Button();
-      if(button_id != BUTTON_MAX)
-      {
-        Log_Printf("button id:%d\n", button_id);
-        Log_Printf("output ret:%d\n", Ir_Output(button_id));
-      }
-    }
-  }
-  else
-  {
-    Log_Printf("IR LEARN MODE\n");
-    while(1)
-    {
-      button_id = Ir_Get_Button();
-      if(button_id != BUTTON_MAX)
-      {
-        Log_Printf("button id:%d\n", button_id);
-        ir_decode_init();
-        LL_TIM_CC_EnableChannel(TIM3, LL_TIM_CHANNEL_CH1);
-        LL_TIM_EnableIT_CC1(TIM3);
-        LL_TIM_EnableCounter(TIM3);
-        Log_Printf("learn ret:%d\n", Ir_Learn(button_id, 10));
-      }
-    }
-  }
+  // if(Get_Run_Mode() == IR_OUTPUT_MODE)
+  // {
+  //   Log_Printf("IR OUTPUT MODE\n");
+  //   while(1)
+  //   {
+  //     button_id = Ir_Get_Button();
+  //     if(button_id != BUTTON_MAX)
+  //     {
+  //       Log_Printf("button id:%d\n", button_id);
+  //       Log_Printf("output ret:%d\n", Ir_Output(button_id));
+  //     }
+  //   }
+  // }
+  // else
+  // {
+  //   Log_Printf("IR LEARN MODE\n");
+  //   while(1)
+  //   {
+  //     button_id = Ir_Get_Button();
+  //     if(button_id != BUTTON_MAX)
+  //     {
+  //       Log_Printf("button id:%d\n", button_id);
+  //       ir_decode_init();
+  //       LL_TIM_CC_EnableChannel(TIM3, LL_TIM_CHANNEL_CH1);
+  //       LL_TIM_EnableIT_CC1(TIM3);
+  //       LL_TIM_EnableCounter(TIM3);
+  //       Log_Printf("learn ret:%d\n", Ir_Learn(button_id, 10));
+  //     }
+  //   }
+  // }
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -195,7 +200,21 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+void EnterSTOP0Mode(void)
+{
+  /** Request to enter "Stop 0" mode
+    * Following procedure describe in STM32G0xx Reference Manual
+    * See PWR part, section Low-power modes, "Stop 0" mode
+    */
+  /* Set Stop 0 mode when CPU enters deepsleep */
+  LL_PWR_SetPowerMode(LL_PWR_MODE_STOP1);
 
+  /* Set SLEEPDEEP bit of Cortex System Control Register */
+  LL_LPM_EnableDeepSleep();
+
+  /* Request Wait For Interrupt */
+  __WFI();
+}
 /* USER CODE END 4 */
 
 /**
