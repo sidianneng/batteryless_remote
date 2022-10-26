@@ -97,13 +97,13 @@ int main(void)
   MX_GPIO_Init();
   Log_Init();
   Log_Printf("batteryless remote start\n");
-  MX_TIM3_Init();
-  MX_TIM14_Init();
-  MX_TIM16_Init();
-  MX_ADC1_Init();
-  LL_GPIO_WriteOutputPort(GPIOA, LL_GPIO_PIN_2);
+  // MX_TIM3_Init();
+  // MX_TIM14_Init();
+  // MX_TIM16_Init();
+  // MX_ADC1_Init();
+  // LL_GPIO_WriteOutputPort(GPIOA, LL_GPIO_PIN_2);
 
-  LL_mDelay(500000);
+  //LL_mDelay(5000000);
   Log_Printf("enter stop mode\n");
   EnterSTOP0Mode();
   Log_Printf("wake up from stop mode\n");
@@ -179,7 +179,6 @@ void SystemClock_Config(void)
   {
   }
 
-  LL_RCC_SetHSIDiv(LL_RCC_HSI_DIV_8);
   /* Set AHB prescaler*/
   LL_RCC_SetAHBPrescaler(LL_RCC_SYSCLK_DIV_1);
 
@@ -192,10 +191,10 @@ void SystemClock_Config(void)
   /* Set APB1 prescaler*/
   LL_RCC_SetAPB1Prescaler(LL_RCC_APB1_DIV_1);
 
-  LL_Init1msTick(2000000);
+  LL_Init1msTick(16000000);
 
   /* Update CMSIS variable (which can be updated also through SystemCoreClockUpdate function) */
-  LL_SetSystemCoreClock(2000000);
+  LL_SetSystemCoreClock(16000000);
   LL_RCC_SetUSARTClockSource(LL_RCC_USART1_CLKSOURCE_PCLK1);
 }
 
