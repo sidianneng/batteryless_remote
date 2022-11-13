@@ -52,6 +52,7 @@ int16_t Ir_Output(Button_Id_t button_id)
 
     //LL_TIM_EnableCounter(TIM16);
     Log_Printf("data cnt:%d\n", ir_decode.data_len);
+    LL_TIM_CC_EnableChannel(TIM14, LL_TIM_CHANNEL_CH1);
     LL_TIM_EnableIT_UPDATE(TIM16);
     LL_TIM_EnableCounter(TIM16);
 
