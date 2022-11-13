@@ -55,7 +55,7 @@
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
-
+void EnterSleepMode(void);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -106,6 +106,12 @@ int main(void)
   if(Get_Run_Mode() == IR_OUTPUT_MODE)
   {
     Log_Printf("IR OUTPUT MODE\n");
+    button_id = Ir_Get_Button();
+    if(button_id == BUTTON_MAX){
+      Log_Printf("No button pressed, System Enter sleep\n");
+      EnterSleepMode();
+      NVIC_DisableIRQ(EXTI4_15_IRQn);
+    }
     button_id = Ir_Get_Button();
     if(button_id != BUTTON_MAX)
     {
@@ -188,7 +194,21 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+void EnterSleepMode(void)
+{
+  /** Request to enter "Stop 0" mode
+    * Following procedure describe in STM32G0xx Reference Manual
+    * See PWR part, section Low-power modes, "Stop 0" mode
+    */
+  /* Set Stop 0 mode when CPU enters deepsleep */
+  LL_PWR_SetPowerMode(LL_PWR_MODE_STOP1);
 
+  /* Set SLEEPDEEP bit of Cortex System Control Register */
+  LL_LPM_EnableDeepSleep();
+
+  /* Request Wait For Interrupt */
+  __WFI();
+}
 /* USER CODE END 4 */
 
 /**
