@@ -106,14 +106,11 @@ int main(void)
   if(Get_Run_Mode() == IR_OUTPUT_MODE)
   {
     Log_Printf("IR OUTPUT MODE\n");
-    while(1)
+    button_id = Ir_Get_Button();
+    if(button_id != BUTTON_MAX)
     {
-      button_id = Ir_Get_Button();
-      if(button_id != BUTTON_MAX)
-      {
-        Log_Printf("button id:%d\n", button_id);
-        Log_Printf("output ret:%d\n", Ir_Output(button_id));
-      }
+      Log_Printf("button id:%d\n", button_id);
+      Log_Printf("output ret:%d\n", Ir_Output(button_id));
     }
   }
   else
