@@ -44,7 +44,7 @@
 [FLASH]
   NumBanks = 2
 [FLASH0]
-  aRangeSel[1] = 0-15
+  aRangeSel[1] = 0-12
   BankName = "Internal program flash"
   BankSelMode = 1
   BaseAddr = 0x08000000
