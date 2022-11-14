@@ -241,11 +241,7 @@ void TIM16_IRQHandler(void)
 
 void EXTI4_15_IRQHandler(void)
 {
-  if (LL_EXTI_IsActiveRisingFlag_0_31(LL_EXTI_LINE_7) != RESET)
-  {
-    LL_EXTI_ClearRisingFlag_0_31(LL_EXTI_LINE_7);
-    Log_Printf("EXTI 7\n");
-  }
+  LL_EXTI_ClearRisingFlag_0_31(LL_EXTI_LINE_ALL);
 }
 /* USER CODE END 1 */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

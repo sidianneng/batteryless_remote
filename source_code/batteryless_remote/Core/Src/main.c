@@ -100,7 +100,6 @@ int main(void)
   MX_TIM3_Init();
   MX_TIM14_Init();
   MX_TIM16_Init();
-  LL_GPIO_WriteOutputPort(GPIOA, LL_GPIO_PIN_2);
 
   /* USER CODE BEGIN 2 */
   if(Get_Run_Mode() == IR_OUTPUT_MODE)
@@ -109,13 +108,19 @@ int main(void)
     button_id = Ir_Get_Button();
     if(button_id == BUTTON_MAX){
       Log_Printf("No button pressed, System Enter sleep\n");
+      NVIC_EnableIRQ(EXTI0_1_IRQn);
+      NVIC_EnableIRQ(EXTI2_3_IRQn);
+      NVIC_EnableIRQ(EXTI4_15_IRQn);
       EnterSleepMode();
+      Log_Printf("wake up from sleep\n");
+      NVIC_DisableIRQ(EXTI0_1_IRQn);
+      NVIC_DisableIRQ(EXTI2_3_IRQn);
       NVIC_DisableIRQ(EXTI4_15_IRQn);
     }
     button_id = Ir_Get_Button();
     if(button_id != BUTTON_MAX)
     {
-      Log_Printf("button id:%d\n", button_id);
+      Log_Printf("button id:%d\n", button_id + 1);
       Log_Printf("output ret:%d\n", Ir_Output(button_id));
     }
   }
