@@ -239,6 +239,16 @@ void TIM16_IRQHandler(void)
   /* USER CODE END TIM16_IRQn 1 */
 }
 
+void EXTI0_1_IRQHandler(void)
+{
+  LL_EXTI_ClearRisingFlag_0_31(LL_EXTI_LINE_ALL);
+}
+
+void EXTI2_3_IRQHandler(void)
+{
+  LL_EXTI_ClearRisingFlag_0_31(LL_EXTI_LINE_ALL);
+}
+
 void EXTI4_15_IRQHandler(void)
 {
   LL_EXTI_ClearRisingFlag_0_31(LL_EXTI_LINE_ALL);

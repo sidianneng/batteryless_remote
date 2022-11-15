@@ -13,7 +13,7 @@
 extern "C" {
 #endif
 
-#define DEBUG_LOG 1
+#define DEBUG_LOG 0
 #define MAX_LOG_BUF_LEN 64U
 
 #define IR_RAW_DATA_DEBUG
