@@ -21,20 +21,8 @@
 #include "gpio.h"
 
 /* USER CODE BEGIN 0 */
-static Button_List button_list[] = {
-  {IR_BUTTON1_PORT, IR_BUTTON1_PIN},
-  {IR_BUTTON2_PORT, IR_BUTTON2_PIN},
-  {IR_BUTTON3_PORT, IR_BUTTON3_PIN},
-  {IR_BUTTON4_PORT, IR_BUTTON4_PIN},
-  {IR_BUTTON5_PORT, IR_BUTTON5_PIN},
-  {IR_BUTTON6_PORT, IR_BUTTON6_PIN},
-  {IR_BUTTON7_PORT, IR_BUTTON7_PIN},
-  {IR_BUTTON8_PORT, IR_BUTTON8_PIN},
-  {IR_BUTTON9_PORT, IR_BUTTON9_PIN},
-  {IR_BUTTON10_PORT, IR_BUTTON10_PIN},
-  {IR_BUTTON11_PORT, IR_BUTTON11_PIN},
-  {IR_BUTTON12_PORT, IR_BUTTON12_PIN}
-};
+static Button_List button_list[] = DEFAULT_KEY_MAP;
+#define BUTTON_MAX (sizeof(button_list)/sizeof(button_list[0]))
 /* USER CODE END 0 */
 
 /*----------------------------------------------------------------------------*/
@@ -76,23 +64,11 @@ void MX_GPIO_Init(void)
   for(uint8_t i = 0;i < BUTTON_MAX; ++i) {
     LL_GPIO_SetPinPull(button_list[i].port, button_list[i].pin, LL_GPIO_PULL_DOWN);
     LL_GPIO_SetPinMode(button_list[i].port, button_list[i].pin, LL_GPIO_MODE_INPUT);
+
+    LL_EXTI_SetEXTISource(button_list[i].exti_port, button_list[i].exti_cfg_line);
+    EXTI_InitStruct.Line_0_31 |= button_list[i].exti_line;
   }
 
-  /* Init EXTI */
-  LL_EXTI_SetEXTISource(LL_EXTI_CONFIG_PORTB, LL_EXTI_CONFIG_LINE7);
-  LL_EXTI_SetEXTISource(LL_EXTI_CONFIG_PORTB, LL_EXTI_CONFIG_LINE9);
-  LL_EXTI_SetEXTISource(LL_EXTI_CONFIG_PORTC, LL_EXTI_CONFIG_LINE15);
-  LL_EXTI_SetEXTISource(LL_EXTI_CONFIG_PORTA, LL_EXTI_CONFIG_LINE0);
-  LL_EXTI_SetEXTISource(LL_EXTI_CONFIG_PORTA, LL_EXTI_CONFIG_LINE4);
-  LL_EXTI_SetEXTISource(LL_EXTI_CONFIG_PORTA, LL_EXTI_CONFIG_LINE5);
-  LL_EXTI_SetEXTISource(LL_EXTI_CONFIG_PORTA, LL_EXTI_CONFIG_LINE8);
-  LL_EXTI_SetEXTISource(LL_EXTI_CONFIG_PORTA, LL_EXTI_CONFIG_LINE11);
-  LL_EXTI_SetEXTISource(LL_EXTI_CONFIG_PORTA, LL_EXTI_CONFIG_LINE12);
-  LL_EXTI_SetEXTISource(LL_EXTI_CONFIG_PORTA, LL_EXTI_CONFIG_LINE13);
-  LL_EXTI_SetEXTISource(LL_EXTI_CONFIG_PORTA, LL_EXTI_CONFIG_LINE14);
-  LL_EXTI_SetEXTISource(LL_EXTI_CONFIG_PORTB, LL_EXTI_CONFIG_LINE6);
-
-  EXTI_InitStruct.Line_0_31 = LL_EXTI_LINE_7 | LL_EXTI_LINE_9 | LL_EXTI_LINE_15 | LL_EXTI_LINE_0 | LL_EXTI_LINE_4 | LL_EXTI_LINE_5 | LL_EXTI_LINE_8 | LL_EXTI_LINE_11 | LL_EXTI_LINE_12 | LL_EXTI_LINE_13 | LL_EXTI_LINE_14 |LL_EXTI_LINE_6;
   EXTI_InitStruct.LineCommand = ENABLE;
   EXTI_InitStruct.Mode = LL_EXTI_MODE_IT;
   EXTI_InitStruct.Trigger = LL_EXTI_TRIGGER_RISING;
@@ -110,7 +86,7 @@ Run_Mode_t Get_Run_Mode(void)
   return LL_GPIO_IsInputPinSet(IR_RUN_MODE_PORT, IR_RUN_MODE_PIN);
 }
 
-Button_Id_t Ir_Get_Button(void)
+uint8_t Ir_Get_Button(void)
 {
   uint8_t i;
   for(i = 0;i < BUTTON_MAX; ++i)
@@ -119,7 +95,7 @@ Button_Id_t Ir_Get_Button(void)
       return i;
   }
 
-  return i;
+  return 0xff; // no button detected
 }
 /* USER CODE END 2 */
 

@@ -8,7 +8,7 @@
  */
 #include "ir_app.h"
 
-int16_t Ir_Output(Button_Id_t button_id)
+int16_t Ir_Output(uint8_t button_id)
 {
     uint16_t temp = 0x0000;
     int16_t result = IR_OK;
@@ -61,7 +61,7 @@ int16_t Ir_Output(Button_Id_t button_id)
 exit:
     return result;
 }
-int16_t Ir_Learn(Button_Id_t button_id, uint32_t timeout_ms)
+int16_t Ir_Learn(uint8_t button_id, uint32_t timeout_ms)
 {
     int16_t result = IR_OK;
     uint32_t time_cnt = 0;
