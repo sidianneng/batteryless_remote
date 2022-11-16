@@ -219,9 +219,9 @@ int16_t flash_write(uint32_t *addr, uint8_t *buf, uint16_t size, uint32_t timeou
     size_of_uint32 = size / 4;
     while(i < size_of_uint32)
     {
-        if(temp_addr + i * 4 > IRDATA_END_ADDR)
+        if(temp_addr / FLASH_PAGE_SIZE * FLASH_PAGE_SIZE + i * 4 > IRDATA_END_ADDR)
         {
-            Log_Printf("write addr overflow\n");
+            Log_Printf("<%d>write addr overflow in %s \n", __LINE__, __func__);
             result = i * 4;
             goto exit;
         }
@@ -232,9 +232,9 @@ int16_t flash_write(uint32_t *addr, uint8_t *buf, uint16_t size, uint32_t timeou
     }
     if(size % 8 != 0)
     {
-        if(addr + i * 4 > IRDATA_END_ADDR)
+        if(temp_addr / FLASH_PAGE_SIZE * FLASH_PAGE_SIZE + i * 4 > IRDATA_END_ADDR)
         {
-            Log_Printf("write addr overflow\n");
+            Log_Printf("<%d>write addr overflow in %s\n", __LINE__, __func__);
             result = i * 4;
             goto exit;
         }
