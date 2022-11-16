@@ -120,7 +120,7 @@ int main(void)
     button_id = Ir_Get_Button();
     if(button_id != 0xff)
     {
-      Log_Printf("button id:%d\n", button_id + 1);
+      Log_Printf("button id:%d\n", button_id);
       Log_Printf("output ret:%d\n", Ir_Output(button_id));
     }
   }
