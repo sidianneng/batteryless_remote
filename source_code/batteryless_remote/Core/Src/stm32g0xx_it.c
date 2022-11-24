@@ -222,9 +222,11 @@ void TIM16_IRQHandler(void)
   if(cnt < ir_decode.data_len){
     LL_TIM_SetAutoReload(TIM16, ir_decode.ir_data[cnt]);
     if(cnt % 2){
+      LL_TIM_OC_SetMode(TIM14, LL_TIM_CHANNEL_CH1, LL_TIM_OCMODE_PWM1);
       LL_TIM_EnableCounter(TIM14);
     } else {
       LL_TIM_DisableCounter(TIM14);
+      LL_TIM_OC_SetMode(TIM14, LL_TIM_CHANNEL_CH1, LL_TIM_OCMODE_FORCED_ACTIVE);
     }
     cnt++;
   } else {
@@ -232,6 +234,7 @@ void TIM16_IRQHandler(void)
     LL_TIM_DisableCounter(TIM16);
     LL_TIM_DisableIT_UPDATE(TIM16);
     LL_TIM_DisableCounter(TIM14);
+    LL_TIM_OC_SetMode(TIM14, LL_TIM_CHANNEL_CH1, LL_TIM_OCMODE_FORCED_ACTIVE);
   }
   /* USER CODE END TIM16_IRQn 0 */
   /* USER CODE BEGIN TIM16_IRQn 1 */
