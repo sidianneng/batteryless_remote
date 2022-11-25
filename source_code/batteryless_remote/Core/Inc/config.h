@@ -18,6 +18,10 @@ extern "C" {
 
 #define IR_RAW_DATA_DEBUG
 
+/* according to different bom, we need to change this macro to match it */
+#define IR_OUT_L_FACTOR (0.04)
+#define IR_OUT_H_FACTOR (0.04)
+
 #ifdef __cplusplus
 }
 #endif

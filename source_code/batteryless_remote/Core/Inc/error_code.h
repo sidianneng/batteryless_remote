@@ -17,6 +17,7 @@ extern "C" {
 #define IR_ERROR 1
 #define IR_TIMEOUT 2
 #define IR_INVAL 3
+#define IR_FLASH_W_ERR 4
 
 #ifdef __cplusplus
 }

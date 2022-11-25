@@ -65,6 +65,9 @@ int16_t Ir_Learn(uint8_t button_id, uint32_t timeout_ms)
 {
     int16_t result = IR_OK;
     uint32_t time_cnt = 0;
+    uint8_t press_time_needed = 0;//we need to press the button for this times before we use it.
+    uint32_t ir_output_l = 0;
+    uint32_t ir_output_h = 0;
     //1 learn the IR waveform
     while(1)
     {
@@ -93,10 +96,34 @@ int16_t Ir_Learn(uint8_t button_id, uint32_t timeout_ms)
     //2 save data to flash
     result = flash_write(IRDATA_START_ADDR + button_id * sizeof(Ir_Decode_t), \
         &ir_decode, sizeof(Ir_Decode_t), 100);
+    if(result != sizeof(Ir_Decode_t)) {
+        LL_GPIO_TogglePin(GPIOA, LL_GPIO_PIN_2);
+        LL_mDelay(2000000);
+        LL_GPIO_TogglePin(GPIOA, LL_GPIO_PIN_2);
+        result = -IR_FLASH_W_ERR;
+        goto exit;
+    }
 
-    //light user led to notify the use
-    for(uint8_t i = 0;i < 10; ++i){
-        LL_mDelay(100000);
+    // calculate the time we need to press before use it
+    for(uint32_t i = 1;i < ir_decode.data_len; ++i){
+        if(i % 2)
+            ir_output_l += ir_decode.ir_data[i];
+        else
+            ir_output_h += ir_decode.ir_data[i];
+    }
+    /* 
+    How we get the press time for button?
+    1 We test the waveform with logic analyzer to get the raw data with different press times.
+    2 Counting the time for high and low levels in ms
+    3 We get the IR_OUT_L_FACTOR and IR_OUT_H_FACTOR by calculating the binary linear equation
+    4 Calculate the press_time_needed with ir_decode.ir_data(in us)
+    5 Add 1 to the result based on experience
+    */
+    press_time_needed = (uint8_t)(ir_output_l / 1000.0 * IR_OUT_L_FACTOR + ir_output_h / 1000.0 * IR_OUT_H_FACTOR) + 1;
+
+    //4 light user led to notify the use
+    for(uint8_t i = 0;i < press_time_needed * 2; ++i){
+        LL_mDelay(200000);
         LL_GPIO_TogglePin(GPIOA, LL_GPIO_PIN_2);
     }
 
