@@ -1,0 +1,47 @@
+No Battery IR Control(sidianneng)  Revised: Saturday, December 03, 2022
+          Revision: 0.3
+
+
+
+
+
+
+
+Bill Of Materials       December 4,2022      16:35:18	Page1
+
+Item	Quantity	Reference	Part
+______________________________________________
+
+1	3	C1,C3,C7	0.1uF
+2	4	C2,C4,C5,C8	4.7uF
+3	1	C6	22nF
+4	6	C9,C10,C11,C12,C13,C14	100uF-6.3V
+5	1	D1	PWR_LED
+6	1	D2	USR_LED
+7	3	D3,D8,D12	1N4148
+8	1	D4	INFRARED
+9	12	K1,K2,K3,K4,K5,K6,K7,K8,	KEY-4
+		K9,K10,K11,K12
+10	1	L1	2.2uH
+11	1	P1	type-c-16pin
+12	1	P2	PW2058
+13	1	Q4	AO3400
+14	1	Q5	BSS84
+15	1	RT1	RT9193
+16	4	R1,R4,R14,R15	10K
+17	1	R2	5K
+18	2	R3,R5	5.1K
+19	1	R6	NC
+20	1	R7	1K
+21	1	R8	220K
+22	1	R9	820K
+23	1	R10	0R
+24	1	R11	7.5K
+25	1	R13	39R
+26	1	S1	SWD
+27	1	S2	IR_INPUT
+28	2	TP1,TP2	T POINT R
+29	1	T1	STM32G030F6P6
+30	1	T2	OUT
+31	1	U1	UART
+32	1	U2	CON6
