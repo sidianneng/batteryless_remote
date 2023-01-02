@@ -56,6 +56,8 @@
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
 void EnterSleepMode(void);
+void Enable_GPIO_Irq(void);
+void Disable_GPIO_Irq(void);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -101,35 +103,35 @@ int main(void)
   MX_TIM14_Init();
   MX_TIM16_Init();
 
+into_sleep:
+  Log_Printf("System Enter sleep\n");
+  Enable_GPIO_Irq();
+  EnterSleepMode();
+  Log_Printf("wake up from sleep\n");
+  Disable_GPIO_Irq();
+
   /* USER CODE BEGIN 2 */
   if (Get_Run_Mode() == IR_OUTPUT_MODE)
   {
     Log_Printf("IR OUTPUT MODE\n");
-    button_id = Ir_Get_Button();
-    if (button_id == 0xff)
-    {
-      Log_Printf("No button pressed, System Enter sleep\n");
-      NVIC_EnableIRQ(EXTI0_1_IRQn);
-      NVIC_EnableIRQ(EXTI2_3_IRQn);
-      NVIC_EnableIRQ(EXTI4_15_IRQn);
-      EnterSleepMode();
-      Log_Printf("wake up from sleep\n");
-      NVIC_DisableIRQ(EXTI0_1_IRQn);
-      NVIC_DisableIRQ(EXTI2_3_IRQn);
-      NVIC_DisableIRQ(EXTI4_15_IRQn);
-    }
     button_id = Ir_Get_Button();
     if (button_id != 0xff)
     {
       Log_Printf("button id:%d\n", button_id);
       Log_Printf("output ret:%d\n", Ir_Output(button_id));
     }
+    goto into_sleep;
   }
   else
   {
     Log_Printf("IR LEARN MODE\n");
     while (1)
     {
+      if (Get_Run_Mode() != IR_LEARN_MODE)
+      {
+        Log_Printf("IR LEARN exit\n");
+        goto into_sleep;
+      }
       button_id = Ir_Get_Button();
       if (button_id != 0xff)
       {
@@ -201,6 +203,20 @@ void EnterSleepMode(void)
 
   /* Request Wait For Interrupt */
   __WFI();
+}
+
+void Enable_GPIO_Irq(void)
+{
+  NVIC_EnableIRQ(EXTI0_1_IRQn);
+  NVIC_EnableIRQ(EXTI2_3_IRQn);
+  NVIC_EnableIRQ(EXTI4_15_IRQn);
+}
+
+void Disable_GPIO_Irq(void)
+{
+  NVIC_DisableIRQ(EXTI0_1_IRQn);
+  NVIC_DisableIRQ(EXTI2_3_IRQn);
+  NVIC_DisableIRQ(EXTI4_15_IRQn);
 }
 /* USER CODE END 4 */
 

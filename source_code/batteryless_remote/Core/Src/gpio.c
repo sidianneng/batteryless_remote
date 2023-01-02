@@ -55,10 +55,10 @@ void MX_GPIO_Init(void)
   LL_GPIO_WriteOutputPort(GPIOA, LL_GPIO_PIN_2);
 
   /* Mode detect */
-  GPIO_InitStruct.Pin = LL_GPIO_PIN_3;
-  GPIO_InitStruct.Mode = LL_GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = LL_GPIO_PULL_DOWN;
-  LL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+  LL_GPIO_SetPinPull(GPIOA, LL_GPIO_PIN_3, LL_GPIO_PULL_DOWN);
+  LL_GPIO_SetPinMode(GPIOA, LL_GPIO_PIN_3, LL_GPIO_MODE_INPUT);
+  LL_EXTI_SetEXTISource(LL_EXTI_CONFIG_PORTA, LL_EXTI_CONFIG_LINE3);
+  EXTI_InitStruct.Line_0_31 |= LL_EXTI_LINE_3;
 
   /* Init Key */
   for (uint8_t i = 0; i < BUTTON_MAX; ++i)
