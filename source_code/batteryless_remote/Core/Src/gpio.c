@@ -1,28 +1,28 @@
 /**
-  ******************************************************************************
-  * @file    gpio.c
-  * @brief   This file provides code for the configuration
-  *          of all used GPIO pins.
-  ******************************************************************************
-  * @attention
-  *
-  * <h2><center>&copy; Copyright (c) 2022 STMicroelectronics.
-  * All rights reserved.</center></h2>
-  *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
-  *
-  ******************************************************************************
-  */
+ ******************************************************************************
+ * @file    gpio.c
+ * @brief   This file provides code for the configuration
+ *          of all used GPIO pins.
+ ******************************************************************************
+ * @attention
+ *
+ * <h2><center>&copy; Copyright (c) 2022 STMicroelectronics.
+ * All rights reserved.</center></h2>
+ *
+ * This software component is licensed by ST under BSD 3-Clause license,
+ * the "License"; You may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at:
+ *                        opensource.org/licenses/BSD-3-Clause
+ *
+ ******************************************************************************
+ */
 
 /* Includes ------------------------------------------------------------------*/
 #include "gpio.h"
 
 /* USER CODE BEGIN 0 */
 static Button_List button_list[] = DEFAULT_KEY_MAP;
-#define BUTTON_MAX (sizeof(button_list)/sizeof(button_list[0]))
+#define BUTTON_MAX (sizeof(button_list) / sizeof(button_list[0]))
 /* USER CODE END 0 */
 
 /*----------------------------------------------------------------------------*/
@@ -33,7 +33,7 @@ static Button_List button_list[] = DEFAULT_KEY_MAP;
 /* USER CODE END 1 */
 
 /** Configure pins
-*/
+ */
 void MX_GPIO_Init(void)
 {
 
@@ -61,7 +61,8 @@ void MX_GPIO_Init(void)
   LL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
   /* Init Key */
-  for(uint8_t i = 0;i < BUTTON_MAX; ++i) {
+  for (uint8_t i = 0; i < BUTTON_MAX; ++i)
+  {
     LL_GPIO_SetPinPull(button_list[i].port, button_list[i].pin, LL_GPIO_PULL_DOWN);
     LL_GPIO_SetPinMode(button_list[i].port, button_list[i].pin, LL_GPIO_MODE_INPUT);
 
@@ -77,7 +78,6 @@ void MX_GPIO_Init(void)
   NVIC_SetPriority(EXTI0_1_IRQn, 0);
   NVIC_SetPriority(EXTI2_3_IRQn, 0);
   NVIC_SetPriority(EXTI4_15_IRQn, 0);
-
 }
 
 /* USER CODE BEGIN 2 */
@@ -89,9 +89,9 @@ Run_Mode_t Get_Run_Mode(void)
 uint8_t Ir_Get_Button(void)
 {
   uint8_t i;
-  for(i = 0;i < BUTTON_MAX; ++i)
+  for (i = 0; i < BUTTON_MAX; ++i)
   {
-    if(LL_GPIO_IsInputPinSet(button_list[i].port, button_list[i].pin))
+    if (LL_GPIO_IsInputPinSet(button_list[i].port, button_list[i].pin))
       return i;
   }
 
