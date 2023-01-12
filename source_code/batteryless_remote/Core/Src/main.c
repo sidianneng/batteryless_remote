@@ -1,21 +1,21 @@
 /* USER CODE BEGIN Header */
 /**
-  ******************************************************************************
-  * @file           : main.c
-  * @brief          : Main program body
-  ******************************************************************************
-  * @attention
-  *
-  * <h2><center>&copy; Copyright (c) 2022 STMicroelectronics.
-  * All rights reserved.</center></h2>
-  *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
-  *
-  ******************************************************************************
-  */
+ ******************************************************************************
+ * @file           : main.c
+ * @brief          : Main program body
+ ******************************************************************************
+ * @attention
+ *
+ * <h2><center>&copy; Copyright (c) 2022 STMicroelectronics.
+ * All rights reserved.</center></h2>
+ *
+ * This software component is licensed by ST under BSD 3-Clause license,
+ * the "License"; You may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at:
+ *                        opensource.org/licenses/BSD-3-Clause
+ *
+ ******************************************************************************
+ */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
@@ -56,6 +56,8 @@
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
 void EnterSleepMode(void);
+void Enable_GPIO_Irq(void);
+void Disable_GPIO_Irq(void);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -64,9 +66,9 @@ void EnterSleepMode(void);
 /* USER CODE END 0 */
 
 /**
-  * @brief  The application entry point.
-  * @retval int
-  */
+ * @brief  The application entry point.
+ * @retval int
+ */
 int main(void)
 {
   /* USER CODE BEGIN 1 */
@@ -97,40 +99,42 @@ int main(void)
   MX_GPIO_Init();
   Log_Init();
   Log_Printf("batteryless remote start\n");
+  Log_Printf("version: %d.%d\n", MAIN_VERSION, SUB_VERSION);
   MX_TIM3_Init();
   MX_TIM14_Init();
   MX_TIM16_Init();
 
+into_sleep:
+  Log_Printf("System Enter sleep\n");
+  Enable_GPIO_Irq();
+  EnterSleepMode();
+  Log_Printf("wake up from sleep\n");
+  Disable_GPIO_Irq();
+
   /* USER CODE BEGIN 2 */
-  if(Get_Run_Mode() == IR_OUTPUT_MODE)
+  if (Get_Run_Mode() == IR_OUTPUT_MODE)
   {
     Log_Printf("IR OUTPUT MODE\n");
     button_id = Ir_Get_Button();
-    if(button_id == 0xff){
-      Log_Printf("No button pressed, System Enter sleep\n");
-      NVIC_EnableIRQ(EXTI0_1_IRQn);
-      NVIC_EnableIRQ(EXTI2_3_IRQn);
-      NVIC_EnableIRQ(EXTI4_15_IRQn);
-      EnterSleepMode();
-      Log_Printf("wake up from sleep\n");
-      NVIC_DisableIRQ(EXTI0_1_IRQn);
-      NVIC_DisableIRQ(EXTI2_3_IRQn);
-      NVIC_DisableIRQ(EXTI4_15_IRQn);
-    }
-    button_id = Ir_Get_Button();
-    if(button_id != 0xff)
+    if (button_id != 0xff)
     {
       Log_Printf("button id:%d\n", button_id);
       Log_Printf("output ret:%d\n", Ir_Output(button_id));
     }
+    goto into_sleep;
   }
   else
   {
     Log_Printf("IR LEARN MODE\n");
-    while(1)
+    while (1)
     {
+      if (Get_Run_Mode() != IR_LEARN_MODE)
+      {
+        Log_Printf("IR LEARN exit\n");
+        goto into_sleep;
+      }
       button_id = Ir_Get_Button();
-      if(button_id != 0xff)
+      if (button_id != 0xff)
       {
         Log_Printf("button id:%d\n", button_id);
         ir_decode_init();
@@ -148,21 +152,21 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-    
+
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
 }
 
 /**
-  * @brief System Clock Configuration
-  * @retval None
-  */
+ * @brief System Clock Configuration
+ * @retval None
+ */
 void SystemClock_Config(void)
 {
   /* HSI configuration and activation */
   LL_RCC_HSI_Enable();
-  while(LL_RCC_HSI_IsReady() != 1)
+  while (LL_RCC_HSI_IsReady() != 1)
   {
   }
 
@@ -171,7 +175,7 @@ void SystemClock_Config(void)
 
   /* Sysclk activation on the HSI */
   LL_RCC_SetSysClkSource(LL_RCC_SYS_CLKSOURCE_HSI);
-  while(LL_RCC_GetSysClkSource() != LL_RCC_SYS_CLKSOURCE_STATUS_HSI)
+  while (LL_RCC_GetSysClkSource() != LL_RCC_SYS_CLKSOURCE_STATUS_HSI)
   {
   }
 
@@ -189,9 +193,9 @@ void SystemClock_Config(void)
 void EnterSleepMode(void)
 {
   /** Request to enter "Stop 0" mode
-    * Following procedure describe in STM32G0xx Reference Manual
-    * See PWR part, section Low-power modes, "Stop 0" mode
-    */
+   * Following procedure describe in STM32G0xx Reference Manual
+   * See PWR part, section Low-power modes, "Stop 0" mode
+   */
   /* Set Stop 0 mode when CPU enters deepsleep */
   LL_PWR_SetPowerMode(LL_PWR_MODE_STOP1);
 
@@ -201,12 +205,26 @@ void EnterSleepMode(void)
   /* Request Wait For Interrupt */
   __WFI();
 }
+
+void Enable_GPIO_Irq(void)
+{
+  NVIC_EnableIRQ(EXTI0_1_IRQn);
+  NVIC_EnableIRQ(EXTI2_3_IRQn);
+  NVIC_EnableIRQ(EXTI4_15_IRQn);
+}
+
+void Disable_GPIO_Irq(void)
+{
+  NVIC_DisableIRQ(EXTI0_1_IRQn);
+  NVIC_DisableIRQ(EXTI2_3_IRQn);
+  NVIC_DisableIRQ(EXTI4_15_IRQn);
+}
 /* USER CODE END 4 */
 
 /**
-  * @brief  This function is executed in case of error occurrence.
-  * @retval None
-  */
+ * @brief  This function is executed in case of error occurrence.
+ * @retval None
+ */
 void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
@@ -218,14 +236,14 @@ void Error_Handler(void)
   /* USER CODE END Error_Handler_Debug */
 }
 
-#ifdef  USE_FULL_ASSERT
+#ifdef USE_FULL_ASSERT
 /**
-  * @brief  Reports the name of the source file and the source line number
-  *         where the assert_param error has occurred.
-  * @param  file: pointer to the source file name
-  * @param  line: assert_param error line source number
-  * @retval None
-  */
+ * @brief  Reports the name of the source file and the source line number
+ *         where the assert_param error has occurred.
+ * @param  file: pointer to the source file name
+ * @param  line: assert_param error line source number
+ * @retval None
+ */
 void assert_failed(uint8_t *file, uint32_t line)
 {
   /* USER CODE BEGIN 6 */

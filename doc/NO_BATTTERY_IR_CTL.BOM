@@ -1,4 +1,4 @@
-No Battery IR Control(sidianneng)  Revised: Saturday, December 03, 2022
+No Battery IR Control(sidianneng)  Revised: Friday, January 13, 2023
           Revision: 0.3
 
 
@@ -7,7 +7,7 @@ No Battery IR Control(sidianneng)  Revised: Saturday, December 03, 2022
 
 
 
-Bill Of Materials       December 4,2022      16:35:18	Page1
+Bill Of Materials        January 13,2023      1:43:19	Page1
 
 Item	Quantity	Reference	Part
 ______________________________________________
@@ -18,7 +18,7 @@ ______________________________________________
 4	6	C9,C10,C11,C12,C13,C14	100uF-6.3V
 5	1	D1	PWR_LED
 6	1	D2	USR_LED
-7	3	D3,D8,D12	1N4148
+7	4	D3,D8,D12,D13	1N4148
 8	1	D4	INFRARED
 9	12	K1,K2,K3,K4,K5,K6,K7,K8,	KEY-4
 		K9,K10,K11,K12
@@ -38,10 +38,13 @@ ______________________________________________
 23	1	R10	0R
 24	1	R11	7.5K
 25	1	R13	39R
-26	1	S1	SWD
-27	1	S2	IR_INPUT
-28	2	TP1,TP2	T POINT R
-29	1	T1	STM32G030F6P6
-30	1	T2	OUT
-31	1	U1	UART
-32	1	U2	CON6
+26	1	R16	DNP
+27	1	S1	SWD
+28	1	S2	IR_INPUT
+29	1	S3	CON4
+30	2	TP1,TP2	T POINT R
+31	1	T1	STM32G030F6P6
+32	1	T2	OUT
+33	1	U1	UART
+34	1	U2	CON6
+35	2	U3,U4	CON2
