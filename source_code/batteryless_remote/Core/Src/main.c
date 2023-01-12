@@ -99,6 +99,7 @@ int main(void)
   MX_GPIO_Init();
   Log_Init();
   Log_Printf("batteryless remote start\n");
+  Log_Printf("version: %d.%d\n", MAIN_VERSION, SUB_VERSION);
   MX_TIM3_Init();
   MX_TIM14_Init();
   MX_TIM16_Init();

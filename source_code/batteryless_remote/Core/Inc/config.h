@@ -13,6 +13,9 @@
 extern "C" {
 #endif
 
+#define MAIN_VERSION 0x01
+#define SUB_VERSION 0x01
+
 #define DEBUG_LOG 0
 #define MAX_LOG_BUF_LEN 64U
 
